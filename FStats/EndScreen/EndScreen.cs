@@ -50,11 +50,13 @@ namespace FStats.EndScreen
             List<DisplayInfo> infos = new();
             foreach (StatController c in FStatsMod.LS.Data)
             {
-                if (FStatsMod.GS.ShouldDisplay(c)
-                    && c.TryGetDisplayInfo(out DisplayInfo info))
+                if (FStatsMod.GS.ShouldDisplay(c))
                 {
-                    info.StatColumns = info.StatColumns.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-                    infos.Add(info);
+                    foreach (DisplayInfo info in c.GetDisplayInfos())
+                    {
+                        info.StatColumns = info.StatColumns.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                        infos.Add(info);
+                    }
                 }
             }
 

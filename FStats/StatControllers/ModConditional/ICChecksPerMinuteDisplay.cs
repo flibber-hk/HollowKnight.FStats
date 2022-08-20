@@ -15,12 +15,11 @@ namespace FStats.StatControllers.ModConditional
             yield return "ItemChangerMod";
         }
 
-        public override bool ConditionalGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
         {
             if (ItemChanger.Internal.Ref.Settings == null)
             {
-                info = null;
-                return false;
+                yield break;
             }
 
             Dictionary<string, int> obtained = new();
@@ -67,8 +66,7 @@ namespace FStats.StatControllers.ModConditional
             TimeByAreaStat tba = FStatsMod.LS.Get<TimeByAreaStat>();
             if (tba is null)
             {
-                info = default;
-                return false;
+                yield break;
             }
             foreach (string area in tba.AreaOrder)
             {
@@ -85,13 +83,12 @@ namespace FStats.StatControllers.ModConditional
                 string.Join("\n", Lines.Slice(1, 2)),
             };
 
-            info = new()
+            yield return new()
             {
                 Title = "Items collected per minute",
                 MainStat = $"{obtained.Values.Sum() / Common.Instance.CountedTime * 60}",
                 StatColumns = Columns,
             };
-            return true;
         }
     }
 }

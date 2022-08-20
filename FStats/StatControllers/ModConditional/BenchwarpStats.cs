@@ -104,12 +104,11 @@ namespace FStats.StatControllers.ModConditional
         {
             Events.OnBenchwarp -= OnBenchwarp;
         }
-        public override bool ConditionalGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
         {
             if (BenchwarpCount.Values.Sum() == 0)
             {
-                info = null;
-                return false;
+                yield break;
             }
 
             List<string> warpInfo = BenchwarpCount.OrderByDescending(kvp => kvp.Value).Select(kvp => $"{kvp.Key} - {kvp.Value}").ToList();
@@ -139,13 +138,12 @@ namespace FStats.StatControllers.ModConditional
                 columns.Add(string.Join("\n", warpInfo.Slice(2, 3)));
             }
 
-            info = new()
+            yield return new()
             {
                 Title = "Bench Warps",
                 MainStat = $"Total warps: {BenchwarpCount.Values.Sum()}",
                 StatColumns = columns
             };
-            return true;
         }
     }
 }

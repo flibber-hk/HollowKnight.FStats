@@ -17,7 +17,7 @@ namespace FStats.StatControllers
         public override void Initialize() { }
         public override void Unload() { }
 
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             HeroActionStats has = FStatsMod.LS.Get<HeroActionStats>();
 
@@ -36,12 +36,11 @@ namespace FStats.StatControllers
             leftSB.AppendLine($"{has.SlashCountLeft} left slashes");
             rightSB.AppendLine($"{has.SlashCountRight} right slashes");
 
-            info = new()
+            yield return new()
             {
                 Title = "Directional Stats",
                 StatColumns = new() { leftSB.ToString(), rightSB.ToString() }
             };
-            return true;
         }
     }
 }

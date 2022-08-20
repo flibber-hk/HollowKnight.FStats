@@ -17,12 +17,11 @@ namespace FStats.StatControllers.ModConditional
             yield return "ItemChangerMod";
         }
 
-        public override bool ConditionalGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
         {
             if (ItemChanger.Internal.Ref.Settings == null)
             {
-                info = null;
-                return false;
+                yield break;
             }
 
             Dictionary<string, int> obtained = new();
@@ -74,13 +73,12 @@ namespace FStats.StatControllers.ModConditional
                 string.Join("\n", Lines.Slice(1, 2)),
             };
 
-            info = new()
+            yield return new()
             {
                 Title = "Items Obtained",
                 MainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()}",
                 StatColumns = Columns,
             };
-            return true;
         }
     }
 

@@ -37,6 +37,6 @@ namespace FStats
         /// </summary>
         /// <param name="info">The info needed to build the display.</param>
         /// <returns>True/false if the display should be shown.</returns>
-        public abstract bool TryGetDisplayInfo(out DisplayInfo info);
+        public abstract IEnumerable<DisplayInfo> GetDisplayInfos();
     }
 }

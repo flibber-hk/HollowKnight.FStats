@@ -17,12 +17,11 @@ namespace FStats.StatControllers.ModConditional
             yield return "ItemSyncMod"; // Not necessary because ItemSync isn't actually used
         }
 
-        public override bool ConditionalGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
         {
             if (ItemChanger.Internal.Ref.Settings == null)
             {
-                info = null;
-                return false;
+                yield break;
             }
 
             Dictionary<string, int> obtained = new();
@@ -65,8 +64,7 @@ namespace FStats.StatControllers.ModConditional
 
             if (total.Values.Sum() == 0)
             {
-                info = default;
-                return false;
+                yield break;
             }
 
             int ObtainedByArea(string area) => obtained
@@ -90,13 +88,12 @@ namespace FStats.StatControllers.ModConditional
                 string.Join("\n", Lines.Slice(1, 2)),
             };
 
-            info = new()
+            yield return new()
             {
                 Title = "Synced items picked up locally",
                 MainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()} ({Mathf.RoundToInt((float)obtained.Values.Sum() / total.Values.Sum() * 100.0f)}%)",
                 StatColumns = Columns,
             };
-            return true;
         }
     }
 }

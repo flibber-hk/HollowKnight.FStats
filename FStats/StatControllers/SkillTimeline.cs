@@ -71,7 +71,7 @@ namespace FStats.StatControllers
         }
 
 
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             List<string> Lines = BoolNames
                 .Where(kvp => SkillObtainTimeline.ContainsKey(kvp.Key))
@@ -95,13 +95,12 @@ namespace FStats.StatControllers
                 };
             }
 
-            info = new()
+            yield return new()
             {
                 Title = "Skill Timeline",
                 MainStat = Common.Instance.TotalTimeString,
                 StatColumns = Columns,
             };
-            return true;
         }
 
         private bool IsExcluded(string skillName)

@@ -9,7 +9,7 @@ namespace FStats.StatControllers.ModConditional
     /// <summary>
     /// Base class for displays that depend on mod(s) to be installed, and will not generate a screen
     /// without the other mod(s).
-    /// Code in <see cref="OnInitialize"/>, <see cref="OnUnload"/> and <see cref="ConditionalGetDisplayInfo"/>
+    /// Code in <see cref="OnInitialize"/>, <see cref="OnUnload"/> and <see cref="ConditionalGetDisplayInfos"/>
     /// can safely require the mods to be installed.
     /// </summary>
     public abstract class ModConditionalDisplay : StatController
@@ -39,17 +39,15 @@ namespace FStats.StatControllers.ModConditional
             if (_modsAvailable) OnUnload();
         }
 
-        public abstract bool ConditionalGetDisplayInfo(out DisplayInfo info);
-        public sealed override bool TryGetDisplayInfo(out DisplayInfo info)
+        public abstract IEnumerable<DisplayInfo> ConditionalGetDisplayInfos();
+        public sealed override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             if (!_modsAvailable)
             {
-                info = default;
-                return false;
+                return Enumerable.Empty<DisplayInfo>();
             }
 
-            bool ret = ConditionalGetDisplayInfo(out info);
-            return ret;
+            return ConditionalGetDisplayInfos();
         }
     }
 }

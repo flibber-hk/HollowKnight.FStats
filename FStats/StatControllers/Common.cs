@@ -46,10 +46,6 @@ namespace FStats.StatControllers
             Instance = null;
             ModHooks.HeroUpdateHook -= CountTime;
         }
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
-        {
-            info = default;
-            return false;
-        }
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => Enumerable.Empty<DisplayInfo>();
     }
 }

@@ -198,7 +198,7 @@ namespace FStats.StatControllers
             }
         }
 
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             StringBuilder leftcol = new StringBuilder();
             StringBuilder rightcol = new StringBuilder();
@@ -214,7 +214,7 @@ namespace FStats.StatControllers
                 rightcol.AppendLine($"Collected {SpawnedGeoCollected} of {GeoSpawned} spawned geo ({percent}%)");
             }
 
-            info = new()
+            yield return new()
             {
                 Title = "Misc Stats",
                 StatColumns = new()
@@ -223,7 +223,6 @@ namespace FStats.StatControllers
                     rightcol.ToString(),
                 }
             };
-            return true;
         }
     }
 }

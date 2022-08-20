@@ -90,7 +90,7 @@ namespace FStats.StatControllers
             ModHooks.SetPlayerIntHook -= CountGeoLost;
         }
 
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             StringBuilder leftcol = new StringBuilder();
             StringBuilder rightcol = new StringBuilder();
@@ -113,12 +113,11 @@ namespace FStats.StatControllers
             string LeftColumn = leftcol.ToString();
             string RightColumn = rightcol.ToString();
 
-            info = new()
+            yield return new()
             {
                 Title = "Combat Stats",
                 StatColumns = new() { LeftColumn, RightColumn },
             };
-            return true;
         }
     }
 }

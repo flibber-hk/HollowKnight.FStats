@@ -161,7 +161,7 @@ namespace FStats.StatControllers
             ModHooks.HeroUpdateHook -= UpdateTimers;
         }
 
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             StringBuilder leftcol = new StringBuilder();
             StringBuilder rightcol = new StringBuilder();
@@ -178,7 +178,7 @@ namespace FStats.StatControllers
             rightcol.AppendLine($"{WallSlidingTime.PlaytimeHHMMSS()} spent wall clinging");
             rightcol.AppendLine($"{DashingTime.PlaytimeHHMMSS()} spent dashing");
 
-            info = new()
+            yield return new()
             {
                 Title = "Hero Actions",
                 StatColumns = new()
@@ -187,8 +187,6 @@ namespace FStats.StatControllers
                     rightcol.ToString()
                 }
             };
-
-            return true;
         }
     }
 }

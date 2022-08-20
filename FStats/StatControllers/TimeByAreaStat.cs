@@ -58,7 +58,7 @@ namespace FStats.StatControllers
             }
         }
 
-        public override bool TryGetDisplayInfo(out DisplayInfo info)
+        public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             List<string> Lines = AreaOrder
                 .Select(area => $"{area} - {TimeByArea(area).PlaytimeHHMMSS()}")
@@ -70,13 +70,12 @@ namespace FStats.StatControllers
                 string.Join("\n", Lines.Slice(1, 2)),
             };
 
-            info = new()
+            yield return new()
             {
                 Title = "Time",
                 MainStat = Common.Instance.CountedTime.PlaytimeHHMMSS(),
                 StatColumns = Columns
             };
-            return true;
         }
     }
 }
