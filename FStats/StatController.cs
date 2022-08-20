@@ -9,7 +9,7 @@ namespace FStats
     public class DisplayInfo
     {
         /// <summary>
-        /// The title of the display
+        /// The title of the display.
         /// </summary>
         public string Title { get; set; }
         /// <summary>
@@ -25,18 +25,16 @@ namespace FStats
     public abstract class StatController
     {
         /// <summary>
-        /// Run when entering the save file
+        /// Run when entering the save file.
         /// </summary>
         public abstract void Initialize();
         /// <summary>
-        /// Run when leaving the save file - () => { Initialize(); Unload(); }; should be the identity.
+        /// Run when leaving the save file - `() => { Initialize(); Unload(); };` should be the identity.
         /// </summary>
         public abstract void Unload();
         /// <summary>
-        /// Get the info used to build the screen. Will be called once when viewing the completion screen.
+        /// Yield a DisplayInfo object for each page that the StatController wants to display.
         /// </summary>
-        /// <param name="info">The info needed to build the display.</param>
-        /// <returns>True/false if the display should be shown.</returns>
         public abstract IEnumerable<DisplayInfo> GetDisplayInfos();
     }
 }
