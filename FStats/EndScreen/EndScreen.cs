@@ -54,10 +54,18 @@ namespace FStats.EndScreen
                 {
                     foreach (DisplayInfo info in c.GetDisplayInfos())
                     {
-                        info.StatColumns = info.StatColumns.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
                         infos.Add(info);
                     }
                 }
+            }
+            foreach (DisplayInfo info in API.BuildAdditionalPages())
+            {
+                infos.Add(info);
+            }
+
+            foreach (DisplayInfo info in infos)
+            {
+                info.StatColumns = info.StatColumns.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
             }
 
             if (infos.Count == 0) return;

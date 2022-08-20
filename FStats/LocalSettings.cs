@@ -33,6 +33,8 @@ namespace FStats
                 new StatControllers.ModConditional.BenchwarpStats(),
                 new StatControllers.MiscStats(),
             };
+
+            Data.AddRange(API.BuildAdditionalStats());
         }
 
         public T Get<T>() where T : StatController
