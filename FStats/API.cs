@@ -36,5 +36,21 @@ namespace FStats
             OnGenerateFile?.Invoke(sc => stats.Add(sc));
             return stats;
         }
+
+        public delegate void ExtensionStatAdder(Action<string> addEntry);
+
+        /// <summary>
+        /// Event invoked when FStats builds the extension stats screen - intended for
+        /// mods which want to add a small number of stats and do not mind their screen
+        /// being shared with other mods.
+        /// </summary>
+        public static event ExtensionStatAdder OnBuildExtensionStats;
+
+        internal static List<string> BuildExtensionStats()
+        {
+            List<string> stats = new();
+            OnBuildExtensionStats?.Invoke(s => stats.Add(s));
+            return stats;
+        }
     }
 }
