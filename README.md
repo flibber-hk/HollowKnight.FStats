@@ -43,3 +43,10 @@ public void SubscribeFStats()
 ```
 
 This event is invoked just before the end screen is shown to the player.
+
+For mods which do not want an entire screen, there is also an API for adding strings entries to the extension stats page (this page will be created
+if at least one mod adds an entry). This can be used by subscribing to the `OnBuildExtensionStats` event - the `addEntry` parameter can be invoked
+on a string to add a line to the extension stats page with that string.
+
+Commonly, a subscription to the OnBuildExtensionStats event will be managed by a stat controller that gets registered via the OnGenerateFile event 
+(as in, a stat controller subscribes to OnBuildExtensionStats in `Initialize` and unsubscribes in `Unload`).
