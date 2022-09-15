@@ -34,11 +34,6 @@ namespace FStats.StatControllers
             ["Dreamer"] = "Dreamer",
         };
 
-        internal static Dictionary<string, List<string>> Exclusions = new()
-        {
-            [nameof(PlayerData.gotCharm_17)] = new() { nameof(RandoPlus.GlobalSettings.MrMushroom) },
-        };
-
         public Dictionary<string, float> SkillObtainTimeline = new();
 
         public override void Initialize()
@@ -99,7 +94,6 @@ namespace FStats.StatControllers
         {
             List<string> Lines = BoolNames
                 .Where(kvp => SkillObtainTimeline.ContainsKey(kvp.Key))
-                .Where(kvp => !IsExcluded(kvp.Key))
                 .OrderBy(kvp => SkillObtainTimeline[kvp.Key])
                 .Select(kvp => $"{kvp.Value}: {SkillObtainTimeline[kvp.Key].PlaytimeHHMMSS()}")
                 .ToList();
@@ -134,21 +128,6 @@ namespace FStats.StatControllers
                 MainStat = Common.Instance.TotalTimeString,
                 StatColumns = Columns,
             };
-        }
-
-        private bool IsExcluded(string skillName)
-        {
-            if (skillName == nameof(PlayerData.gotCharm_17))
-            {
-                //RandoPlus.GlobalSettings randoPlus = new RandoPlus.GlobalSettings();
-                //RandomizerMod.Settings.PoolSettings randorando = new RandomizerMod.Settings.PoolSettings();
-                //if (!RandoPlus.GS.MrMushroom)
-                //{
-                //    return true;
-                //}
-            }
-
-            return false;
         }
     }
 }
