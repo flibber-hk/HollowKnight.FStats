@@ -31,6 +31,7 @@ namespace FStats
                 new StatControllers.DirectionalStats(),
                 new StatControllers.CombatStats(),
                 new StatControllers.SkillTimeline(),
+                new StatControllers.KeyTimeline(),
                 new StatControllers.ModConditional.BenchwarpStats(),
                 new StatControllers.MiscStats(),
                 new StatControllers.ExtensionStats(),
