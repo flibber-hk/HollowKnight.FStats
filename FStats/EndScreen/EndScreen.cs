@@ -71,6 +71,7 @@ namespace FStats.EndScreen
             infos = infos
                 .Where(x => !string.IsNullOrEmpty(x.Title))
                 .OrderBy(x => x.Priority)
+                .CycleTo(x => x.Priority >= BuiltinScreenPriorityValues.TimeByAreaStat)
                 .ToList();
 
             if (infos.Count == 0) return;

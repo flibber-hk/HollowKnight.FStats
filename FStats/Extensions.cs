@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FStats
 {
@@ -55,5 +55,38 @@ namespace FStats
 
 			return dict[key];
         }
+
+		/// <summary>
+		/// Return an enumerable with elements moved to the end of the input until the first element 
+		/// matching the selector is reached.
+		/// If none of the elements match the selector, return a copy of the original.
+		/// </summary>
+		public static IEnumerable<T> CycleTo<T>(this IEnumerable<T> values, Func<T, bool> selector)
+		{
+			List<T> initialSegment = new();
+			bool found = false;
+			
+			foreach (T current in values)
+			{
+				if (!found && selector(current))
+				{
+					found = true;
+                }
+				
+				if (found)
+				{
+					yield return current;
+                }
+				else
+				{
+					initialSegment.Add(current);
+				}
+			}
+
+			foreach (T current in initialSegment)
+			{
+				yield return current;
+			}
+		}
 	}
 }
