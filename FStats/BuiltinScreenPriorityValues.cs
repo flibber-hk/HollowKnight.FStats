@@ -1,5 +1,8 @@
 ﻿namespace FStats
 {
+    /// <summary>
+    /// Class holding the (constant) priority values of FStats' stat screens.
+    /// </summary>
     public static class BuiltinScreenPriorityValues
     {
         public static double TimeByAreaStat { get; } = -100_000;
