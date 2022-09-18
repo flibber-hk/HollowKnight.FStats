@@ -39,7 +39,8 @@ namespace FStats.StatControllers
             yield return new()
             {
                 Title = "Directional Stats",
-                StatColumns = new() { leftSB.ToString(), rightSB.ToString() }
+                StatColumns = new() { leftSB.ToString(), rightSB.ToString() },
+                Priority = BuiltinScreenPriorityValues.DirectionalStats,
             };
         }
     }

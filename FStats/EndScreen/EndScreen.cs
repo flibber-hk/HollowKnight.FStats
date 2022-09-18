@@ -65,8 +65,13 @@ namespace FStats.EndScreen
 
             foreach (DisplayInfo info in infos)
             {
-                info.StatColumns = info.StatColumns.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                info.StatColumns = info.StatColumns?.Where(x => !string.IsNullOrWhiteSpace(x)).ToList() ?? new();
             }
+
+            infos = infos
+                .Where(x => !string.IsNullOrEmpty(x.Title))
+                .OrderBy(x => x.Priority)
+                .ToList();
 
             if (infos.Count == 0) return;
 

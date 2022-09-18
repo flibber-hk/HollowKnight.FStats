@@ -93,6 +93,7 @@ namespace FStats.StatControllers.ModConditional
                 Title = "Synced items picked up locally",
                 MainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()} ({Mathf.RoundToInt((float)obtained.Values.Sum() / total.Values.Sum() * 100.0f)}%)",
                 StatColumns = Columns,
+                Priority = BuiltinScreenPriorityValues.ItemSyncData,
             };
         }
     }

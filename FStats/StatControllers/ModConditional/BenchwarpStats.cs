@@ -142,7 +142,8 @@ namespace FStats.StatControllers.ModConditional
             {
                 Title = "Bench Warps",
                 MainStat = $"Total warps: {BenchwarpCount.Values.Sum()}",
-                StatColumns = columns
+                StatColumns = columns,
+                Priority = BuiltinScreenPriorityValues.BenchwarpStats,
             };
         }
     }

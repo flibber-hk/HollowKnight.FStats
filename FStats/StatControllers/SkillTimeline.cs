@@ -100,6 +100,7 @@ namespace FStats.StatControllers
                 Title = "Skill Timeline",
                 MainStat = Common.Instance.TotalTimeString,
                 StatColumns = Columns,
+                Priority = BuiltinScreenPriorityValues.SkillTimeline,
             };
         }
 

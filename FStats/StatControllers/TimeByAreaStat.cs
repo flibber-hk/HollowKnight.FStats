@@ -74,7 +74,8 @@ namespace FStats.StatControllers
             {
                 Title = "Time",
                 MainStat = Common.Instance.CountedTime.PlaytimeHHMMSS(),
-                StatColumns = Columns
+                StatColumns = Columns,
+                Priority = BuiltinScreenPriorityValues.TimeByAreaStat,
             };
         }
     }

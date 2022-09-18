@@ -88,6 +88,7 @@ namespace FStats.StatControllers.ModConditional
                 Title = "Items collected per minute",
                 MainStat = $"{obtained.Values.Sum() / Common.Instance.CountedTime * 60}",
                 StatColumns = Columns,
+                Priority = BuiltinScreenPriorityValues.ICChecksPerMinuteDisplay,
             };
         }
     }

@@ -26,7 +26,8 @@ namespace FStats.StatControllers
             {
                 Title = "Extension Stats",
                 MainStat = "",
-                StatColumns = columns
+                StatColumns = columns,
+                Priority = BuiltinScreenPriorityValues.ExtensionStats,
             };
         }
     }

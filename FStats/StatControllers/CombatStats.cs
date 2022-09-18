@@ -117,6 +117,7 @@ namespace FStats.StatControllers
             {
                 Title = "Combat Stats",
                 StatColumns = new() { LeftColumn, RightColumn },
+                Priority = BuiltinScreenPriorityValues.CombatStats,
             };
         }
     }

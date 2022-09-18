@@ -185,7 +185,8 @@ namespace FStats.StatControllers
                 {
                     leftcol.ToString(),
                     rightcol.ToString()
-                }
+                },
+                Priority = BuiltinScreenPriorityValues.HeroActionStats,
             };
         }
     }

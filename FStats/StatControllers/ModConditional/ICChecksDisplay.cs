@@ -78,6 +78,7 @@ namespace FStats.StatControllers.ModConditional
                 Title = "Items Obtained",
                 MainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()}",
                 StatColumns = Columns,
+                Priority = BuiltinScreenPriorityValues.ICChecksDisplay,
             };
         }
     }
