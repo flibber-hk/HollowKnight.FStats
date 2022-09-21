@@ -30,7 +30,7 @@ namespace FStats
         
         public override string GetVersion()
         {
-            return GetType().Assembly.GetName().Version.ToString();
+            return Vasi.VersionUtil.GetVersion<FStatsMod>();
         }
 
         public override int LoadPriority() => 3;
