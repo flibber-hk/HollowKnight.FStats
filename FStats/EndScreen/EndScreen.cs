@@ -7,29 +7,15 @@ namespace FStats.EndScreen
 {
     public static class EndScreen
     {
-        private static bool ShouldDisplay => FStatsMod.LS.InitializedOnNewGame;
+        internal static bool ShouldDisplay => FStatsMod.LS.InitializedOnNewGame;
 
         public static void Hook()
         {
             On.GameCompletionScreen.Start += GameCompletionScreen_Start;
             // Allow the player to use left and right to cycle stat screens
             On.InputHandler.CutsceneInput += PreventCutsceneSkip;
-#if DEBUG
-            On.GameManager.BeginSceneTransition += SkipThkFight;
-#endif
         }
 
-        private static void SkipThkFight(On.GameManager.orig_BeginSceneTransition orig, GameManager self, GameManager.SceneLoadInfo info)
-        {
-            if ((info.SceneName == ItemChanger.SceneNames.Room_Final_Boss_Core || info.SceneName == ItemChanger.SceneNames.Room_temple)
-                && Input.GetKey(KeyCode.B)
-                && ShouldDisplay)
-            {
-                info.SceneName = ItemChanger.SceneNames.End_Game_Completion;
-            }
-
-            orig(self, info);
-        }
 
         private static void PreventCutsceneSkip(On.InputHandler.orig_CutsceneInput orig, InputHandler self)
         {
