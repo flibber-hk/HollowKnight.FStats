@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Benchwarp;
+using FStats.Util;
 
 namespace FStats.StatControllers.ModConditional
 {
