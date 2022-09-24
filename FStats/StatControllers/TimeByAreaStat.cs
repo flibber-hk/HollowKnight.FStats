@@ -49,7 +49,10 @@ namespace FStats.StatControllers
             }
         }
 
-        internal List<string> AreaOrder
+        /// <summary>
+        /// The order the areas are displayed on the Time by Area screen.
+        /// </summary>
+        public List<string> AreaOrder
         {
             get
             {
