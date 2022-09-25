@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using FStats.Attributes;
 using Modding;
 using Modding.Utils;
 
@@ -13,6 +14,12 @@ namespace FStats
         public bool ShouldDisplay(StatController c)
         {
             Type type = c.GetType();
+
+            if (type.GetCustomAttribute<GlobalSettingsExcludeAttribute>() is not null)
+            {
+                return true;
+            }
+
             string screenName = type.Name;
 
             if (DisplayedScreens.TryGetValue(screenName, out bool shouldDisplay))
@@ -20,7 +27,7 @@ namespace FStats
                 return shouldDisplay;
             }
 
-            shouldDisplay = type.GetCustomAttribute<Attributes.DefaultHiddenScreenAttribute>() == null;
+            shouldDisplay = type.GetCustomAttribute<DefaultHiddenScreenAttribute>() == null;
             DisplayedScreens[screenName] = shouldDisplay;
             return shouldDisplay;
         }
