@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FStats.Util
 {
     public static class Extensions
     {
+        public static int CeilingDivide(this int n, int d)
+        {
+            return Mathf.CeilToInt((float)n / d);
+        }
+
         public static string PlaytimeHHMMSS(this float t)
         {
             PlayTime pt = new() { RawTime = t };
