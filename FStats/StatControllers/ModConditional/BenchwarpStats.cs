@@ -9,7 +9,7 @@ namespace FStats.StatControllers.ModConditional
     /// <summary>
     /// Factor out NameForBench method into a separate class to prevent serialization issues when Benchwarp is not installed
     /// </summary>
-    internal static class BenchwarpStatsUtil
+    internal static class BenchwarpExtensions
     {
         private static readonly HashSet<string> AreaNameBenches = new()
         {
@@ -24,7 +24,7 @@ namespace FStats.StatControllers.ModConditional
             "Balcony"
         };
 
-        internal static string NameForBench(Bench target)
+        internal static string BenchDisplayName(this Bench target)
         {
             string name = Events.GetBenchName(target);
 
@@ -74,7 +74,7 @@ namespace FStats.StatControllers.ModConditional
 
                     if (target is not null)
                     {
-                        benchName = BenchwarpStatsUtil.NameForBench(target);
+                        benchName = target.BenchDisplayName();
                         break;
                     }
 
