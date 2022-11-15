@@ -6,6 +6,38 @@ using FStats.Util;
 
 namespace FStats.StatControllers.ModConditional
 {
+    /// <summary>
+    /// Factor out NameForBench method into a separate class to prevent serialization issues when Benchwarp is not installed
+    /// </summary>
+    internal static class BenchwarpStatsUtil
+    {
+        private static readonly HashSet<string> AreaNameBenches = new()
+        {
+            "Hot Springs",
+            "Toll",
+            "Stag",
+            "Waterfall",
+            "Dark Room",
+            "Cornifer",
+            "Entrance",
+            "Atrium",
+            "Balcony"
+        };
+
+        internal static string NameForBench(Bench target)
+        {
+            string name = Events.GetBenchName(target);
+
+            if (AreaNameBenches.Contains(name))
+            {
+                name = $"{target.areaName} {name}";
+            }
+
+            return name;
+        }
+
+    }
+
     public class BenchwarpStats : ModConditionalDisplay
     {
         protected override IEnumerable<string> RequiredMods()
@@ -42,7 +74,7 @@ namespace FStats.StatControllers.ModConditional
 
                     if (target is not null)
                     {
-                        benchName = NameForBench(target);
+                        benchName = BenchwarpStatsUtil.NameForBench(target);
                         break;
                     }
 
@@ -74,31 +106,6 @@ namespace FStats.StatControllers.ModConditional
             }
 
             BenchwarpCount.IncrementValue(benchName);
-        }
-
-        private static readonly HashSet<string> AreaNameBenches = new()
-        {
-            "Hot Springs",
-            "Toll",
-            "Stag",
-            "Waterfall",
-            "Dark Room",
-            "Cornifer",
-            "Entrance",
-            "Atrium",
-            "Balcony"
-        };
-
-        private string NameForBench(Bench target)
-        {
-            string name = Events.GetBenchName(target);
-
-            if (AreaNameBenches.Contains(name))
-            {
-                name = $"{target.areaName} {name}";
-            }
-
-            return name;
         }
 
         public override void OnUnload()
