@@ -30,6 +30,7 @@ namespace FStats
                 new StatControllers.HeroActionStats(),
                 new StatControllers.DirectionalStats(),
                 new StatControllers.CombatStats(),
+                new StatControllers.TransitionStats(),
                 new StatControllers.SkillTimeline(),
                 new StatControllers.ModConditional.BenchwarpStats(),
                 new StatControllers.MiscStats(),

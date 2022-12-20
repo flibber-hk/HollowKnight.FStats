@@ -28,6 +28,16 @@ namespace FStats.StatControllers
             return $"{t.PlaytimeHHMMSS()} {msg} ({percent:0.##}%)";
         }
 
+        /// <summary>
+        /// Get a string representing t as a proportion of the total time
+        /// </summary>
+        public string GetTimePercentString(float t)
+        {
+            int percent = Mathf.RoundToInt(t / CountedTime * 100);
+            return $"{t.PlaytimeHHMMSS()} ({percent:0.##}%)";
+        }
+
+
         [JsonIgnore]
         public string TotalTimeString => "Total time: " + CountedTime.PlaytimeHHMMSS();
 
