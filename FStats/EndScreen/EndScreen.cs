@@ -15,6 +15,7 @@ namespace FStats.EndScreen
             On.GameCompletionScreen.Start += GameCompletionScreen_Start;
             // Allow the player to use left and right to cycle stat screens
             On.InputHandler.CutsceneInput += PreventCutsceneSkip;
+            SkipToEndScreen.Hook();
         }
 
 

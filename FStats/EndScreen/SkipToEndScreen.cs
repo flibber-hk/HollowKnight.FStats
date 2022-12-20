@@ -37,7 +37,7 @@ namespace FStats.EndScreen
         {
             if (_skipToEndScreenEnabled
                 && (info.SceneName == ItemChanger.SceneNames.Room_Final_Boss_Core || info.SceneName == ItemChanger.SceneNames.Room_temple)
-                && Input.GetKey(KeyCode.B)
+                && Input.GetKey(EndScreenSkipKeyCode)
                 && EndScreen.ShouldDisplay)
             {
                 info.SceneName = ItemChanger.SceneNames.End_Game_Completion;
