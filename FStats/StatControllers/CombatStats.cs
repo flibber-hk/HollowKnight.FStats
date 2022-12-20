@@ -6,13 +6,14 @@ using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using Modding;
 using UnityEngine;
+using FStats.Util;
 
 namespace FStats.StatControllers
 {
     public class CombatStats : StatController
     {
         public int KillCount = 0;
-        public Dictionary<AttackTypes, int> ReducedDamageByType = Enum.GetValues(typeof(AttackTypes)).Cast<AttackTypes>().ToDictionary(type => type, type => 0);
+        public Dictionary<AttackTypes, int> ReducedDamageByType = CollectionUtils.EmptyCounter<AttackTypes>();
         public int DamageTaken = 0;
         public int DeathCount = 0;
         public float TimeWithoutShade = 0f;
