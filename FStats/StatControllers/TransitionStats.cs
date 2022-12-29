@@ -144,9 +144,6 @@ namespace FStats.StatControllers
 
             TransitionsEntered[source]++;
             TransitionsExited[target]++;
-
-            FStatsMod.instance.Log($"{source} {target} {info.SceneName} {info.EntryGateName} {info.GetType()}");
-            FStatsMod.instance.Log("");
         }
 
         private void RecordTransitionTime()
