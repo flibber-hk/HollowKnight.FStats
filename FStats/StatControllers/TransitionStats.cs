@@ -21,6 +21,7 @@ namespace FStats.StatControllers
             Dream,
             Dreamgate,
             Stag,
+            Elevator,
             Other
         }
 
@@ -41,6 +42,7 @@ namespace FStats.StatControllers
             if (transition.Contains("door_stagExit")) return TransitionType.Stag;
             if (transition.Contains("door_dreamReturn")) return TransitionType.Dream;
             if (transition.ToLower().Contains("dreamgate")) return TransitionType.Dreamgate;
+            if (transition.ToLower().StartsWith("elev")) return TransitionType.Elevator;
 
             // May lead to false positives, but is unlikely
             if ((transition.Contains("door") || transition.StartsWith("room"))
@@ -49,7 +51,6 @@ namespace FStats.StatControllers
                 return TransitionType.Door;
             }
             
-            // There are a lot of ways it can be a door
             return TransitionType.Other;
         }
 
@@ -101,6 +102,10 @@ namespace FStats.StatControllers
             {
                 _recordedLastTransition = TransitionType.Right;
             }
+            else if (fsmName == "Lift Move")
+            {
+                _recordedLastTransition = TransitionType.Elevator;
+            }
 
             else
             {
@@ -128,11 +133,11 @@ namespace FStats.StatControllers
                 _recordedLastTransition = null;
             }
 
-            if (target == TransitionType.Stag || target == TransitionType.Dreamgate || target == TransitionType.Dream)
+            if (target == TransitionType.Stag || target == TransitionType.Dreamgate || target == TransitionType.Dream || target == TransitionType.Elevator)
             {
                 source = target;
             }
-            else if (source == TransitionType.Stag || source == TransitionType.Dreamgate || source == TransitionType.Dream)
+            else if (source == TransitionType.Stag || source == TransitionType.Dreamgate || source == TransitionType.Dream || target == TransitionType.Elevator)
             {
                 target = source;
             }
@@ -166,16 +171,14 @@ namespace FStats.StatControllers
             }
 
             StringBuilder leftCol = new StringBuilder()
-                .AppendLine($"Transitions Entered: {TransitionsEntered.Values.Sum()}")
-                .AppendLine();
+                .AppendLine($"Transitions Entered: {TransitionsEntered.Values.Sum()}");
             foreach ((TransitionType t, int count) in TransitionsEntered.Where(kvp => FilterTransitionType(kvp.Key)))
             {
                 leftCol.AppendLine($"{t}: {count}");
             }
 
             StringBuilder rightCol = new StringBuilder()
-                .AppendLine($"Transitions Exited: {TransitionsExited.Values.Sum()}")
-                .AppendLine();
+                .AppendLine($"Transitions Exited: {TransitionsExited.Values.Sum()}");
             foreach ((TransitionType t, int count) in TransitionsExited.Where(kvp => FilterTransitionType(kvp.Key)))
             {
                 rightCol.AppendLine($"{t}: {count}");
