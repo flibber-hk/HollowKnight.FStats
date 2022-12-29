@@ -9,6 +9,8 @@ namespace FStats.StatControllers
 {
     public class TransitionStats : StatController
     {
+        private readonly Modding.ILogger _logger = new SimpleLogger("FStats.TransitionStats");
+
         public enum TransitionType
         {
             Left,
@@ -91,6 +93,11 @@ namespace FStats.StatControllers
             {
                 _recordedLastTransition = TransitionType.Dream;
             }
+            else
+            {
+                _logger.LogWarn($"Unrecognized transition: "
+                    + $"{self.Fsm.FsmComponent.gameObject.name} - {self.Fsm.FsmComponent.FsmName} @ {self.State.Name}");
+            }
 
             orig(self);
         }
@@ -140,10 +147,18 @@ namespace FStats.StatControllers
 
         public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
+            bool FilterTransitionType(TransitionType t)
+            {
+                if (t == TransitionType.Left || t == TransitionType.Right || t == TransitionType.Top || t == TransitionType.Bottom) return true;
+                if (TransitionsEntered[t] > 0 || TransitionsExited[t] > 0) return true;
+
+                return false;
+            }
+
             StringBuilder leftCol = new StringBuilder()
                 .AppendLine($"Transitions Entered: {TransitionsEntered.Values.Sum()}")
                 .AppendLine();
-            foreach ((TransitionType t, int count) in TransitionsEntered)
+            foreach ((TransitionType t, int count) in TransitionsEntered.Where(kvp => FilterTransitionType(kvp.Key)))
             {
                 leftCol.AppendLine($"{t}: {count}");
             }
@@ -151,7 +166,7 @@ namespace FStats.StatControllers
             StringBuilder rightCol = new StringBuilder()
                 .AppendLine($"Transitions Exited: {TransitionsExited.Values.Sum()}")
                 .AppendLine();
-            foreach ((TransitionType t, int count) in TransitionsExited)
+            foreach ((TransitionType t, int count) in TransitionsExited.Where(kvp => FilterTransitionType(kvp.Key)))
             {
                 rightCol.AppendLine($"{t}: {count}");
             }
