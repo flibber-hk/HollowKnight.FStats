@@ -85,20 +85,30 @@ namespace FStats.StatControllers
 
         private void NotifyDoorTransitions(On.HutongGames.PlayMaker.Actions.BeginSceneTransition.orig_OnEnter orig, HutongGames.PlayMaker.Actions.BeginSceneTransition self)
         {
-            if (self.Fsm.FsmComponent.FsmName == "Door Control")
+            PlayMakerFSM fsm = self.Fsm.FsmComponent;
+            string goName = fsm.gameObject.name;
+            string fsmName = fsm.FsmName;
+
+            if (fsmName == "Door Control")
             {
                 _recordedLastTransition = TransitionType.Door;
             }
-            else if (self.Fsm.FsmComponent.gameObject.name.StartsWith("Dream Enter"))
+            else if (goName.StartsWith("Dream Enter"))
             {
                 _recordedLastTransition = TransitionType.Dream;
             }
+            else if (goName == "Door" && fsmName == "Great Door" && fsm.gameObject.scene.name == ItemChanger.SceneNames.Tutorial_01)
+            {
+                _recordedLastTransition = TransitionType.Right;
+            }
+
             else
             {
                 _logger.LogWarn($"Unrecognized transition: "
                     + $"{self.Fsm.FsmComponent.gameObject.name} - {self.Fsm.FsmComponent.FsmName} @ {self.State.Name}");
             }
 
+            // orig(self) calls GM.BeginSceneTransition, so we need to execute beforehand
             orig(self);
         }
 
