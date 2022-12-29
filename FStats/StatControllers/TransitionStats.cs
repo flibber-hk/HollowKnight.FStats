@@ -40,8 +40,12 @@ namespace FStats.StatControllers
             if (transition.Contains("door_dreamReturn")) return TransitionType.Dream;
             if (transition.ToLower().Contains("dreamgate")) return TransitionType.Dreamgate;
 
-            // Not sure
-            // if (transition.Contains("door") || transition.StartsWith("room")) return TransitionType.Door;
+            // May lead to false positives, but is unlikely
+            if ((transition.Contains("door") || transition.StartsWith("room"))
+                && !transition.ToLower().Contains("dream"))
+            {
+                return TransitionType.Door;
+            }
             
             // There are a lot of ways it can be a door
             return TransitionType.Other;
