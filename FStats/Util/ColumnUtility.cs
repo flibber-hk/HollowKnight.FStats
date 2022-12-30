@@ -1,13 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
+
+// The methods in this class haven't been tested or properly thought through yet :zote:
+// I'll try to put together something better but for now try not to use them if possible
 
 namespace FStats.Util
 {
     /// <summary>
     /// Class containing convenience methods to organise stat entries into columns.
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ColumnUtility
     {
         /// <summary>
@@ -16,6 +19,7 @@ namespace FStats.Util
         /// <param name="entries">The entries to display.</param>
         /// <param name="maxEntriesPerColumn">The maximum number of entries per column.</param>
         /// <returns>An iterator over columns represented as a list of strings.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<List<T>> DistributeColumns<T>(this IEnumerable<T> entries, int maxEntriesPerColumn = 10)
         {
             List<T> entriesAsList = entries.ToList();
@@ -35,6 +39,7 @@ namespace FStats.Util
         /// <param name="maxColumnsPerPage">The maximum number of columns per page.</param>
         /// <param name="pageLimit">Whether to limit to only return one page.</param>
         /// <returns></returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<List<List<T>>> DistributePages<T>(this IEnumerable<T> entries, int maxEntriesPerColumn = 10, int maxColumnsPerPage = 4, bool pageLimit = false)
         {
             List<T> entriesAsList = entries.ToList();
@@ -46,6 +51,7 @@ namespace FStats.Util
             }
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static List<string> ToPage(this List<List<string>> columns) 
         {
             return columns.Select(col => string.Join("\n", col)).ToList();
@@ -57,6 +63,7 @@ namespace FStats.Util
         /// <param name="template">A <see cref="DisplayInfo"/> encapsulating the remaining info about the page.</param>
         /// <param name="columnGroups"></param>
         /// <returns>An enumerator over pages.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<DisplayInfo> ApplyColumns(this DisplayInfo template, IEnumerable<List<string>> columnGroups)
         {
             foreach (List<string> columnGroup in columnGroups)
