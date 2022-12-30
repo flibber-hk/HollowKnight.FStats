@@ -123,6 +123,7 @@ namespace FStats.StatControllers
 
             // Assume this is a warp of some sort (e.g. Benchwarp, Debug save state, so we don't need to load it)
             if (info.GetType() != typeof(GameManager.SceneLoadInfo)) return;
+            if (self.sceneName == ItemChanger.SceneNames.Menu_Title) return;
 
             TransitionType source = FromGatePosition(info.HeroLeaveDirection ?? GatePosition.unknown);
             TransitionType target = NameToDirection(info.EntryGateName);
@@ -144,6 +145,8 @@ namespace FStats.StatControllers
 
             TransitionsEntered[source]++;
             TransitionsExited[target]++;
+
+            _logger.LogDebug($"{source}->{target} {self.sceneName} {info.SceneName}[{info.EntryGateName}]");
         }
 
         private void RecordTransitionTime()
