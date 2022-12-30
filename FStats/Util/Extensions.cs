@@ -94,5 +94,26 @@ namespace FStats.Util
                 yield return current;
             }
         }
+
+        /// <summary>
+        /// Given an IEnumerable of objects, groups them in blocks of length `count` and yields them.
+        /// (The last block may have length less than `count`).
+        /// </summary>
+        public static IEnumerable<List<T>> GroupSegments<T>(this IEnumerable<T> ts, int count)
+        {
+            List<T> accumulator = new();
+
+            foreach (T t in ts)
+            {
+                accumulator.Add(t);
+                if (accumulator.Count == count)
+                {
+                    yield return new(accumulator);
+                    accumulator.Clear();
+                }
+            }
+
+            yield return new(accumulator);
+        }
     }
 }

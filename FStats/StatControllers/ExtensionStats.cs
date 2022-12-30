@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FStats.Util;
 
 namespace FStats.StatControllers
@@ -12,24 +12,16 @@ namespace FStats.StatControllers
         public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             List<string> stats = API.BuildExtensionStats();
-            if (stats.Count == 0) yield break;
+            if (stats.Count == 0) return Enumerable.Empty<DisplayInfo>();
 
-            List<string> columns = new();
-
-            int numColumns = (int)Math.Ceiling(stats.Count / 11f);
-
-            for (int i = 0; i < numColumns; i++)
-            {
-                columns.Add(string.Join("\n", stats.Slice(i, numColumns)));
-            }
-
-            yield return new()
+            DisplayInfo template = new()
             {
                 Title = "Extension Stats",
                 MainStat = "",
-                StatColumns = columns,
                 Priority = BuiltinScreenPriorityValues.ExtensionStats,
             };
+
+            return ColumnUtility.CreateDisplay(template, stats, maxEntriesPerColumn: 11);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Benchwarp;
 using FStats.Util;
@@ -7,7 +6,7 @@ using FStats.Util;
 namespace FStats.StatControllers.ModConditional
 {
     /// <summary>
-    /// Factor out NameForBench method into a separate class to prevent serialization issues when Benchwarp is not installed
+    /// Factor out NameForBench method into a separate class to prevent serialization issues when Benchwarp is not installed.
     /// </summary>
     internal static class BenchwarpExtensions
     {
@@ -116,43 +115,19 @@ namespace FStats.StatControllers.ModConditional
         {
             if (BenchwarpCount.Values.Sum() == 0)
             {
-                yield break;
+                return Enumerable.Empty<DisplayInfo>();
             }
 
             List<string> warpInfo = BenchwarpCount.OrderByDescending(kvp => kvp.Value).Select(kvp => $"{kvp.Key} - {kvp.Value}").ToList();
 
-            List<string> columns = new();
-
-            if (warpInfo.Count <= 10)
-            {
-                columns.Add(string.Join("\n", warpInfo));
-            }
-            else if (warpInfo.Count <= 20)
-            {
-                columns.Add(string.Join("\n", warpInfo.Slice(0, 2)));
-                columns.Add(string.Join("\n", warpInfo.Slice(1, 2)));
-            }
-            else if (warpInfo.Count <= 27)
-            {
-                columns.Add(string.Join("\n", warpInfo.Slice(0, 3)));
-                columns.Add(string.Join("\n", warpInfo.Slice(1, 3)));
-                columns.Add(string.Join("\n", warpInfo.Slice(2, 3)));
-            }
-            else
-            {
-                warpInfo = warpInfo.Take(27).ToList();
-                columns.Add(string.Join("\n", warpInfo.Slice(0, 3)));
-                columns.Add(string.Join("\n", warpInfo.Slice(1, 3).Append("...")));
-                columns.Add(string.Join("\n", warpInfo.Slice(2, 3)));
-            }
-
-            yield return new()
+            DisplayInfo template = new()
             {
                 Title = "Bench Warps",
                 MainStat = $"Total warps: {BenchwarpCount.Values.Sum()}",
-                StatColumns = columns,
                 Priority = BuiltinScreenPriorityValues.BenchwarpStats,
             };
+
+            return ColumnUtility.CreateDisplay(template, warpInfo, singlePage: true, maxColumnsPerPage: 3);
         }
     }
 }

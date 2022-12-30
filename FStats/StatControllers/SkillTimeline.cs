@@ -74,35 +74,26 @@ namespace FStats.StatControllers
 
         public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
-            List<string> Lines = BoolNames
+            List<string> lines = BoolNames
                 .Where(kvp => SkillObtainTimeline.ContainsKey(kvp.Key))
                 .Where(kvp => !IsExcluded(kvp.Key))
                 .OrderBy(kvp => SkillObtainTimeline[kvp.Key])
                 .Select(kvp => $"{kvp.Value}: {SkillObtainTimeline[kvp.Key].PlaytimeHHMMSS()}")
                 .ToList();
 
-            List<string> Columns;
-
-            if (Lines.Count <= 10)
+            if (lines.Count == 0)
             {
-                Columns = new() { string.Join("\n", Lines) };
-            }
-            else
-            {
-                Columns = new()
-                {
-                    string.Join("\n", Lines.Slice(0, 2)),
-                    string.Join("\n", Lines.Slice(1, 2)),
-                };
+                return Enumerable.Empty<DisplayInfo>();
             }
 
-            yield return new()
+            DisplayInfo template = new()
             {
                 Title = "Skill Timeline",
                 MainStat = Common.Instance.TotalTimeString,
-                StatColumns = Columns,
                 Priority = BuiltinScreenPriorityValues.SkillTimeline,
             };
+
+            return ColumnUtility.CreateDisplay(template, lines);
         }
 
         private bool IsExcluded(string skillName)
