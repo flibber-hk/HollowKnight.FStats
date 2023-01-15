@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FStats
 {
@@ -20,6 +21,11 @@ namespace FStats
         /// Stat screens will be cycled in increasing order of priority.
         /// </summary>
         public double Priority { get; set; } = 0;
+
+        /// <summary>
+        /// If this is not null, then any display for which it returns true will not be shown.
+        /// </summary>
+        public Func<DisplayInfo, bool> DisplaySuppressor = null;
 
         /// <summary>
         /// Creates and returns a shallow copy of this DisplayInfo object.
