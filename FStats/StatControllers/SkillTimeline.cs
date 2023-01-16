@@ -31,6 +31,10 @@ namespace FStats.StatControllers
             [nameof(ItemChanger.Modules.SplitSuperdash.hasSuperdashRight)] = "Right Crystal Heart",
             [nameof(ItemChanger.Modules.SwimSkill.canSwim)] = "Swim",
             [nameof(ItemChanger.Modules.FocusSkill.canFocus)] = "Focus",
+            [nameof(ItemChanger.Modules.SplitNail.canSideslashLeft)] = ItemChanger.ItemNames.Leftslash,
+            [nameof(ItemChanger.Modules.SplitNail.canSideslashRight)] = ItemChanger.ItemNames.Rightslash,
+            [nameof(ItemChanger.Modules.SplitNail.canUpslash)] = ItemChanger.ItemNames.Upslash,
+            // [nameof(ItemChanger.Modules.SplitNail.canDownslash)] = ItemChanger.ItemNames.Downslash,
         };
 
         internal static Dictionary<string, List<string>> Exclusions = new()
