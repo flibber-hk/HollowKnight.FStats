@@ -54,10 +54,16 @@ namespace FStats
             return stats;
         }
 
+        /// <summary>
+        /// This event will be applied to all screens; if any subscriber returns true
+        /// for a particular <see cref="DisplayInfo"/>, that screen will not be shown.
+        /// </summary>
         public static event Func<DisplayInfo, bool> DisplaySuppressor;
 
         internal static void FilterScreens(List<DisplayInfo> infos)
         {
+            if (DisplaySuppressor is null) return;
+
             Delegate[] suppressors = DisplaySuppressor.GetInvocationList();
 
             infos.RemoveAll(ShouldRemove);
