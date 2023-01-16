@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FStats
 {
@@ -51,6 +52,24 @@ namespace FStats
             List<string> stats = new();
             OnBuildExtensionStats?.Invoke(s => stats.Add(s));
             return stats;
+        }
+
+        public static event Func<DisplayInfo, bool> DisplaySuppressor;
+
+        internal static void FilterScreens(List<DisplayInfo> infos)
+        {
+            Delegate[] suppressors = DisplaySuppressor.GetInvocationList();
+
+            infos.RemoveAll(ShouldRemove);
+
+            bool ShouldRemove(DisplayInfo info)
+            {
+                foreach (Func<DisplayInfo, bool> suppressor in suppressors.Cast<Func<DisplayInfo, bool>>())
+                {
+                    if (suppressor(info)) return true;
+                }
+                return false;
+            }
         }
     }
 }
