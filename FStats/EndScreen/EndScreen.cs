@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FStats.Util;
 using TMPro;
 using UnityEngine;
-using UObject = UnityEngine.Object;
 
 namespace FStats.EndScreen
 {
@@ -53,12 +51,6 @@ namespace FStats.EndScreen
                 infos.Add(info);
             }
 
-            List<Func<DisplayInfo, bool>> suppressors = infos.Select(x => x.DisplaySuppressor).Where(x => x is not null).ToList();
-            if (suppressors.Count > 0)
-            {
-                infos = infos.Where(info => suppressors.All(s => !s(info))).ToList();
-            }
-
             foreach (DisplayInfo info in infos)
             {
                 info.StatColumns = info.StatColumns?.Where(x => !string.IsNullOrWhiteSpace(x)).ToList() ?? new();
@@ -99,7 +91,7 @@ namespace FStats.EndScreen
             List<TextMeshPro> columns = new();
             for (int i = 0; i < requiredColumnCount; i++)
             {
-                GameObject column = UObject.Instantiate(timeNum);
+                GameObject column = Object.Instantiate(timeNum);
                 column.transform.SetParent(timeNum.transform.parent);
                 column.AddComponent<AlphaMonitor>().tmpro_other = timeNum.GetComponent<TextMeshPro>();
                 column.SetActive(true);
@@ -113,7 +105,7 @@ namespace FStats.EndScreen
             #endregion
 
             GameObject continueText = self.transform.Find("any button to continue").gameObject;
-            UObject.Destroy(continueText.GetComponent<SetTextMeshProGameText>());
+            Object.Destroy(continueText.GetComponent<SetTextMeshProGameText>());
             continueText.GetComponent<TextMeshPro>().text = "Press left/right for more stats, or jump/attack to continue";
         }
 
