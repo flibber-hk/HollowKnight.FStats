@@ -62,6 +62,8 @@ namespace FStats.EndScreen
                 .CycleTo(x => x.Priority >= BuiltinScreenPriorityValues.TimeByAreaStat)
                 .ToList();
 
+            API.FilterScreens(infos);
+
             if (infos.Count == 0) return;
 
             #region Percentage
