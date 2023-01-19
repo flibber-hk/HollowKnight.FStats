@@ -13,6 +13,7 @@
         public static double DirectionalStats { get; } = -75_000;
         public static double CombatStats { get; } = -74_000;
         public static double TransitionStats { get; } = -73_000;
+        public static double TransitionTimeByAreaStats { get; } = -72_000;
         public static double SkillTimeline { get; } = -50_000;
         public static double BenchwarpStats { get; } = -25_000;
         public static double MiscStats { get; } = 50_000;

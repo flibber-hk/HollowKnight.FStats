@@ -151,14 +151,20 @@ namespace FStats.StatControllers
 
         private void RecordTransitionTime()
         {
-            if (HeroController.instance.transitionState == HeroTransitionState.EXITING_SCENE
-                || HeroController.instance.transitionState == HeroTransitionState.WAITING_TO_ENTER_LEVEL
-                || HeroController.instance.transitionState == HeroTransitionState.ENTERING_SCENE)
+            if (IsTransitioning(HeroController.instance))
             {
                 GameManager.instance.IncreaseGameTimer(ref TransitionTime);
             }
         }
 
+        public static bool IsTransitioning(HeroController hc)
+        {
+            HeroTransitionState state = hc.transitionState;
+
+            return (state == HeroTransitionState.EXITING_SCENE
+                || state == HeroTransitionState.WAITING_TO_ENTER_LEVEL
+                || state == HeroTransitionState.ENTERING_SCENE);
+        }
 
         public override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
