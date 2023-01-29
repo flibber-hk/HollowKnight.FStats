@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace FStats
 {
+    /// <summary>
+    /// Object which will be loaded and unloaded by FStats when a save file is entered and exited.
+    /// </summary>
     public abstract class StatController
     {
         /// <summary>
@@ -18,18 +21,19 @@ namespace FStats
 
         /// <summary>
         /// Yield a DisplayInfo object for each page that the StatController wants to display.
-        /// This method will be called if this StatController is associated with the Local Settings.
+        /// This method will be called if this instance is associated with the Local Settings.
         /// </summary>
         public virtual IEnumerable<DisplayInfo> GetDisplayInfos() => Enumerable.Empty<DisplayInfo>();
 
         /// <summary>
         /// Yield a DisplayInfo object for each page that the StatController wants to display.
-        /// This method will be called if this StatController is associated with the Global Settings.
+        /// This method will be called if this instance is associated with the Global Settings.
         /// </summary>
         public virtual IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => Enumerable.Empty<DisplayInfo>();
 
         /// <summary>
         /// The number of save files this StatController has been initialized with.
+        /// This quantity will only be nonzero if this is associated with the GlobalSettings.
         /// </summary>
         [JsonProperty] public int FileCount { get; internal set; } = 0;
     }
