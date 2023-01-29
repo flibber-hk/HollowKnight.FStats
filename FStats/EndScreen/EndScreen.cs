@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FStats.EndScreen
 {
-    public static class EndScreen
+    public static class EndScreenManager
     {
         internal static bool ShouldDisplay => FStatsMod.LS.InitializedOnNewGame;
 
@@ -62,53 +62,20 @@ namespace FStats.EndScreen
                 .CycleTo(x => x.Priority >= BuiltinScreenPriorityValues.TimeByAreaStat)
                 .ToList();
 
+            // Filter out screens that have been excluded through the API event.
             API.FilterScreens(infos);
 
             if (infos.Count == 0) return;
 
-            #region Percentage
-            string ShownPercentage = PlayerData.instance.completionPercentage.ToString() + "%";
-            string VanillaPercentage = PlayerData.instance.GetVanillaCompletion().ToString() + "%";
 
-            if (ShownPercentage != VanillaPercentage)
-            {
-                // Show vanilla percentage amount if it differs from the shown amount
-                self.percentageNumber.text = $"{ShownPercentage}           (Vanilla {VanillaPercentage})";
-            }
-            #endregion
+            // Set up the screen
+            EndScreenObjectHolder holder = EndScreenObjectHolder.Setup(self);
+            NavigationManager nav = new(infos, out DisplayInfo initial);
 
-            float dist = 3.5f;
-            MoveUp(self.transform.Find("credits fleur (1)"), dist);
-            MoveUp(self.transform.Find("game completion title"), dist);
-            MoveUp(self.transform.Find("Percent_title"), dist);
-            MoveUp(self.transform.Find("percentage_num"), dist);
-            MoveUp(self.transform.Find("Time_title"), dist);
-            MoveUp(self.transform.Find("time_num"), dist);
-
-            #region Set up text columns
-            int requiredColumnCount = infos.Max(info => info.StatColumns.Count);
-
-            GameObject timeNum = self.playTimeNumber.gameObject;
-
-            List<TextMeshPro> columns = new();
-            for (int i = 0; i < requiredColumnCount; i++)
-            {
-                GameObject column = Object.Instantiate(timeNum);
-                column.transform.SetParent(timeNum.transform.parent);
-                column.AddComponent<AlphaMonitor>().tmpro_other = timeNum.GetComponent<TextMeshPro>();
-                column.SetActive(true);
-                columns.Add(column.GetComponent<TextMeshPro>());
-            }
-
-            GameObject timeTitle = self.transform.Find("Time_title").gameObject;
-            StatScreenCycler cyc = timeTitle.AddComponent<StatScreenCycler>();
-            cyc.columns = columns;
-            cyc.displayInfos = infos;
-            #endregion
-
-            GameObject continueText = self.transform.Find("any button to continue").gameObject;
-            Object.Destroy(continueText.GetComponent<SetTextMeshProGameText>());
-            continueText.GetComponent<TextMeshPro>().text = "Press left/right for more stats, or jump/attack to continue";
+            StatScreenCycler cyc = self.playTimeNumber.gameObject.AddComponent<StatScreenCycler>();
+            cyc.ObjectHolder = holder;
+            cyc.NavigationManager = nav;
+            cyc.OnStart += () => holder.Display(initial);
         }
 
         private static void MoveUp(Transform t, float dist)

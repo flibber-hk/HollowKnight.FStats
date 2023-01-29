@@ -42,7 +42,7 @@ namespace FStats
             On.GameManager.StartNewGame += GameManager_StartNewGame;
             On.GameManager.ContinueGame += GameManager_ContinueGame;
             ModHooks.NewGameHook += ModHooks_NewGameHook;
-            EndScreen.EndScreen.Hook();
+            EndScreen.EndScreenManager.Hook();
         }
 
         private void ModHooks_NewGameHook()

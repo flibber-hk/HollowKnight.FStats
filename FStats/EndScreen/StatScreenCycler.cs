@@ -1,79 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 
 namespace FStats.EndScreen
 {
     public class StatScreenCycler : MonoBehaviour
     {
-        // The gap between adjacent columns
-        public const float hOffset = 8.5f;
-        public const float vOffset = 0.9f;
+        public NavigationManager NavigationManager { get; set; }
+        public EndScreenObjectHolder ObjectHolder { get; set; }
 
-        public List<DisplayInfo> displayInfos;
-        private int index;
+        public Action OnStart;
 
-        private TextMeshPro title;
-        private TextMeshPro mainstat;
-        public List<TextMeshPro> columns;
-
-        void Start()
-        {
-            title = GetComponent<TextMeshPro>();
-            mainstat = transform.parent.Find("time_num").GetComponent<TextMeshPro>();
-
-            index = 0;
-            SetText(index);
-        }
+        void Start() => OnStart?.Invoke();
 
         void Update()
         {
+            NavigationDirection dir = NavigationDirection.None;
+
             if (InputHandler.Instance.inputActions.left.WasPressed)
             {
-                index = (index + displayInfos.Count - 1) % displayInfos.Count;
-                SetText(index);
+                dir = NavigationDirection.Left;
             }
-            if (InputHandler.Instance.inputActions.right.WasPressed)
+            else if (InputHandler.Instance.inputActions.right.WasPressed)
             {
-                index = (index + 1) % displayInfos.Count;
-                SetText(index);
+                dir = NavigationDirection.Right;
             }
-        }
-
-        private void SetText(int index)
-        {
-            DisplayInfo info = displayInfos[index];
-
-            title.text = info.Title;
-            mainstat.text = info.MainStat;
-
-            int i;
-            for (i = 0; i < info.StatColumns.Count; i++)
+            else if (InputHandler.Instance.inputActions.up.WasPressed)
             {
-                columns[i].text = info.StatColumns[i];
+                dir = NavigationDirection.Up;
             }
-            for (; i < columns.Count; i++)
+            else if (InputHandler.Instance.inputActions.down.WasPressed)
             {
-                columns[i].text = string.Empty;
+                dir = NavigationDirection.Down;
             }
 
-            float yPos = transform.position.y - vOffset;
-
-            if (!string.IsNullOrEmpty(info.MainStat))
+            if (dir != NavigationDirection.None && NavigationManager.TryMove(dir, out DisplayInfo next))
             {
-                yPos = transform.position.y - 2 * vOffset;
-            }
-
-            float xPos = transform.position.x - (hOffset / 2) * (info.StatColumns.Count - 1);
-            for (i = 0; i < info.StatColumns.Count; i++)
-            {
-                columns[i].transform.position = new Vector3(xPos, yPos, transform.position.z);
-                xPos += hOffset;
+                ObjectHolder.Display(next);
             }
         }
     }
