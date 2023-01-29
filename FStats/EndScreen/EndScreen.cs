@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FStats.Util;
-using TMPro;
 using UnityEngine;
 
 namespace FStats.EndScreen
