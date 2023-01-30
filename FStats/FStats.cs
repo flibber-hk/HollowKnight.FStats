@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Modding;
-using UnityEngine;
+using System;
 
 namespace FStats
 {
@@ -20,10 +17,10 @@ namespace FStats
         }
 
         public static GlobalSettings GS = new();
-        internal static GlobalStatManager GlobalStats;
+        public static GlobalStatManager GlobalStats { get; set; }
         public GlobalSettings OnSaveGlobal()
         {
-            GlobalStats.Save();
+            GlobalStatManager.Save(GlobalStats);
             return GS;
         }
         public void OnLoadGlobal(GlobalSettings gs)
@@ -53,8 +50,22 @@ namespace FStats
             On.GameManager.ContinueGame += GameManager_ContinueGame;
             ModHooks.NewGameHook += ModHooks_NewGameHook;
             EndScreen.EndScreenManager.Hook();
+
+            RegisterInternalGlobalStats();
+            ModHooks.FinishedLoadingModsHook += () => GlobalStats.AddGlobalStats();
         }
 
+        private void RegisterInternalGlobalStats()
+        {
+            API.RegisterGlobalStat<StatControllers.Common>();
+            API.RegisterGlobalStat<StatControllers.TimeByAreaStat>();
+            API.RegisterGlobalStat<StatControllers.HeroActionStats>();
+            API.RegisterGlobalStat<StatControllers.DirectionalStats>();
+            API.RegisterGlobalStat<StatControllers.CombatStats>();
+            API.RegisterGlobalStat<StatControllers.TransitionStats>();
+            API.RegisterGlobalStat<StatControllers.ModConditional.BenchwarpStats>();
+            API.RegisterGlobalStat<StatControllers.MiscStats>();
+        }
 
         private void StartStats(bool newGame)
         {

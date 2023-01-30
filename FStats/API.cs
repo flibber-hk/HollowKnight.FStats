@@ -77,5 +77,14 @@ namespace FStats
                 return false;
             }
         }
+
+        internal static List<(Type type, Func<StatController> maker)> GlobalStatTypes = new();
+        /// <summary>
+        /// Register a Global StatController, to be loaded across all (new) save files.
+        /// 
+        /// This function should be called during Mod.Initialize, or the stat controller might not be registered.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public static void RegisterGlobalStat<T>() where T : StatController, new() => GlobalStatTypes.Add((typeof(T), () => new T()));
     }
 }
