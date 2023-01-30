@@ -21,6 +21,12 @@ namespace FStats
 
         public List<StatController> Data;
 
+        IEnumerable<StatController> IStatCollection.EnumerateActiveStats()
+        {
+            foreach (StatController sc in Data ?? Enumerable.Empty<StatController>()) yield return sc;
+        }
+
+
         private static List<StatController> GenerateStatControllers()
         {
             List<StatController> controllers = new()

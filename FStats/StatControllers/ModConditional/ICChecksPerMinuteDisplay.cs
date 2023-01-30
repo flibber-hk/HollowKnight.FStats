@@ -87,7 +87,7 @@ namespace FStats.StatControllers.ModConditional
             yield return new()
             {
                 Title = "Items collected per minute",
-                MainStat = $"{obtained.Values.Sum() / Common.Instance.CountedTime * 60}",
+                MainStat = $"{obtained.Values.Sum() / GetOwningCollection().Get<Common>().CountedTime * 60}",
                 StatColumns = Columns,
                 Priority = BuiltinScreenPriorityValues.ICChecksPerMinuteDisplay,
             };
