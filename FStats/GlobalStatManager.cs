@@ -47,21 +47,21 @@ namespace FStats
             {
                 JArray ja = (JArray)jt;
                 List<StatController> list = new();
-                foreach (JToken jTag in ja)
+                foreach (JToken jSc in ja)
                 {
-                    StatController t;
+                    StatController sc;
                     try
                     {
-                        t = jTag.ToObject<StatController>(serializer);
+                        sc = jSc.ToObject<StatController>(serializer);
                     }
                     catch (Exception)
                     {
-                        t = new InvalidStatHolder
+                        sc = new InvalidStatHolder
                         {
-                            JSON = jTag,
+                            JSON = jSc,
                         };
                     }
-                    list.Add(t);
+                    list.Add(sc);
                 }
                 return list;
             }
@@ -83,7 +83,7 @@ namespace FStats
 
         [JsonProperty]
         [JsonConverter(typeof(SafeStatControllerListConverter))]
-        private List<StatController> TrackedStats { get; } = new();
+        private List<StatController> TrackedStats { get; set; } = new();
 
         public T Get<T>() where T : StatController
         {
@@ -95,6 +95,7 @@ namespace FStats
             foreach ((Type t, Func<StatController> maker) in API.GlobalStatTypes)
             {
                 if (TrackedStats.Any(x => x.GetType() == t)) continue;
+                _logger.LogDebug($"Adding new {t.FullName}");
                 TrackedStats.Add(maker());
             }
         }
@@ -136,7 +137,7 @@ namespace FStats
                 }
             );
 
-            if (obj is GlobalStatManager mgr) return mgr;
+            if (obj is GlobalStatManager mgr) return mgr ?? new();
 
             _logger.LogWarn("Could not load Global Stat Manager from saves; creating new");
             return new();
