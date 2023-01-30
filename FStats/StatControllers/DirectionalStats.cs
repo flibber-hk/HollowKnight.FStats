@@ -18,9 +18,9 @@ namespace FStats.StatControllers
         public override void Initialize() { }
         public override void Unload() { }
 
-        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth()
         {
-            IStatCollection coll = global ? FStatsMod.GlobalStats : FStatsMod.LS;
+            IStatCollection coll = GetOwningCollection();
 
             HeroActionStats has = coll.Get<HeroActionStats>();
             Common common = coll.Get<Common>();
@@ -48,7 +48,7 @@ namespace FStats.StatControllers
             };
         }
 
-        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
-        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth();
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth();
     }
 }

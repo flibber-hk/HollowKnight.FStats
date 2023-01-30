@@ -94,8 +94,6 @@ namespace FStats.StatControllers
 
         private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
-            IStatCollection coll = global ? FStatsMod.GlobalStats : FStatsMod.LS;
-
             StringBuilder leftcol = new();
             StringBuilder rightcol = new();
 
@@ -109,10 +107,10 @@ namespace FStats.StatControllers
             if (DeathCount > 0)
             {
                 rightcol.AppendLine($"{DeathCount} deaths");
-                rightcol.AppendLine(coll.Get<Common>().GetTimePercentString(TimeWithoutShade, "without shade"));
+                rightcol.AppendLine(GetOwningCollection().Get<Common>().GetTimePercentString(TimeWithoutShade, "without shade"));
                 if (GeoLostToDeaths > 0) rightcol.AppendLine($"{GeoLostToDeaths} geo lost to deaths");
             }
-            rightcol.AppendLine(coll.Get<Common>().GetTimePercentString(TimeAtOneHP, "at 1HP"));
+            rightcol.AppendLine(GetOwningCollection().Get<Common>().GetTimePercentString(TimeAtOneHP, "at 1HP"));
 
             string LeftColumn = leftcol.ToString();
             string RightColumn = rightcol.ToString();
