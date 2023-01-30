@@ -153,6 +153,14 @@ namespace FStats
 
         internal static void Save(GlobalStatManager mgr) 
         {
+            if (!FStatsMod.GS.TrackGlobalStats
+                || FStatsMod.GS.PreventSavingGlobalStats)
+            {
+                _logger.Log($"Not saving global stats because of global settings ({FStatsMod.GS.TrackGlobalStats}, {FStatsMod.GS.PreventSavingGlobalStats})");
+                return;
+            }
+
+
             _logger.Log("Saving Global Stats");
 
             if (File.Exists(_globalStatsPath))
@@ -178,6 +186,8 @@ namespace FStats
 
         public void Initialize(int count)
         {
+            if (!FStatsMod.GS.TrackGlobalStats) return;
+
             if (_loadedCount > 0)
             {
                 return;
@@ -192,6 +202,8 @@ namespace FStats
 
         public int InitializeAll()
         {
+            if (!FStatsMod.GS.TrackGlobalStats) return 0;
+
             if (_loadedCount > 0)
             {
                 return _loadedCount;
@@ -220,6 +232,12 @@ namespace FStats
 
         public List<DisplayInfo> GenerateDisplays()
         {
+            if (!FStatsMod.GS.TrackGlobalStats
+                || !FStatsMod.GS.ShowGlobalStats)
+            {
+                return new();
+            }
+
             List<DisplayInfo> infos = new();
 
             for (int i = 0; i < _loadedCount; i++)
