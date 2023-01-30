@@ -62,7 +62,7 @@ namespace FStats.StatControllers
             }
         }
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
             List<string> Lines = AreaOrder
                 .Select(area => $"{area} - {TimeByArea(area).PlaytimeHHMMSS()}")
@@ -74,13 +74,20 @@ namespace FStats.StatControllers
                 string.Join("\n", Lines.Slice(1, 2)),
             };
 
+            Common common = global ? FStatsMod.GlobalStats.Get<Common>() : FStatsMod.LS.Get<Common>();
+            string mainStat = common.CountedTime.PlaytimeHHMMSS();
+
             yield return new()
             {
-                Title = "Time",
-                MainStat = Common.Instance.CountedTime.PlaytimeHHMMSS(),
+                Title = "Time" + SaveFileCountString(),
+                MainStat = mainStat,
                 StatColumns = Columns,
                 Priority = BuiltinScreenPriorityValues.TimeByAreaStat,
             };
+
         }
+
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
     }
 }

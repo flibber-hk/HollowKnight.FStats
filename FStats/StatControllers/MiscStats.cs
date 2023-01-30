@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FStats.Interfaces;
 using HutongGames.PlayMaker;
 using Modding;
 using MonoMod.Cil;
@@ -198,10 +199,10 @@ namespace FStats.StatControllers
             }
         }
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth()
         {
-            StringBuilder leftcol = new StringBuilder();
-            StringBuilder rightcol = new StringBuilder();
+            StringBuilder leftcol = new();
+            StringBuilder rightcol = new();
 
             leftcol.AppendLine($"{BreakableObjectsBroken} objects broken");
             leftcol.AppendLine($"Cut {GrassObjectsBroken} grass");
@@ -216,7 +217,7 @@ namespace FStats.StatControllers
 
             yield return new()
             {
-                Title = "Misc Stats",
+                Title = "Misc Stats" + SaveFileCountString(),
                 StatColumns = new()
                 {
                     leftcol.ToString(),
@@ -225,5 +226,8 @@ namespace FStats.StatControllers
                 Priority = BuiltinScreenPriorityValues.MiscStats,
             };
         }
+
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth();
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth();
     }
 }

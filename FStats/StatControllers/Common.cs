@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FStats.Util;
 using Modding;
 using Newtonsoft.Json;
@@ -15,7 +13,8 @@ namespace FStats.StatControllers
     /// </summary>
     public class Common : StatController
     {
-        public static Common Instance { get; set; }
+        // TODO - make a common interface to get stats?
+        [Obsolete("Use FStatsMod.LS.Get<Common>() to get the local instance")] public static Common Instance => FStatsMod.LS.Get<Common>();
 
         public float CountedTime = 0f;
 
@@ -43,7 +42,6 @@ namespace FStats.StatControllers
 
         public override void Initialize()
         {
-            Instance = this;
             ModHooks.HeroUpdateHook += CountTime;
         }
 
@@ -54,9 +52,7 @@ namespace FStats.StatControllers
 
         public override void Unload()
         {
-            Instance = null;
             ModHooks.HeroUpdateHook -= CountTime;
         }
-        public override IEnumerable<DisplayInfo> GetDisplayInfos() => Enumerable.Empty<DisplayInfo>();
     }
 }

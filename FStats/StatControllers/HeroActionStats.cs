@@ -162,10 +162,10 @@ namespace FStats.StatControllers
             ModHooks.HeroUpdateHook -= UpdateTimers;
         }
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
-            StringBuilder leftcol = new StringBuilder();
-            StringBuilder rightcol = new StringBuilder();
+            StringBuilder leftcol = new();
+            StringBuilder rightcol = new();
 
             leftcol.AppendLine($"{DashCount} dashes");
             leftcol.AppendLine($"{JumpCount} jumps");
@@ -181,7 +181,7 @@ namespace FStats.StatControllers
 
             yield return new()
             {
-                Title = "Hero Actions",
+                Title = $"Hero Actions" + SaveFileCountString(),
                 StatColumns = new()
                 {
                     leftcol.ToString(),
@@ -190,5 +190,8 @@ namespace FStats.StatControllers
                 Priority = BuiltinScreenPriorityValues.HeroActionStats,
             };
         }
+
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
     }
 }

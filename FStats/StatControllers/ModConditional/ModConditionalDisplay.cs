@@ -49,5 +49,17 @@ namespace FStats.StatControllers.ModConditional
 
             return ConditionalGetDisplayInfos();
         }
+
+
+        public abstract IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos();
+        public sealed override IEnumerable<DisplayInfo> GetGlobalDisplayInfos()
+        {
+            if (!_modsAvailable)
+            {
+                return Enumerable.Empty<DisplayInfo>();
+            }
+
+            return ConditionalGetGlobalDisplayInfos();
+        }
     }
 }

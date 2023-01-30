@@ -7,6 +7,7 @@ using MonoMod.RuntimeDetour;
 using Modding;
 using UnityEngine;
 using FStats.Util;
+using FStats.Interfaces;
 
 namespace FStats.StatControllers
 {
@@ -91,10 +92,12 @@ namespace FStats.StatControllers
             ModHooks.SetPlayerIntHook -= CountGeoLost;
         }
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
-            StringBuilder leftcol = new StringBuilder();
-            StringBuilder rightcol = new StringBuilder();
+            IStatCollection coll = global ? FStatsMod.GlobalStats : FStatsMod.LS;
+
+            StringBuilder leftcol = new();
+            StringBuilder rightcol = new();
 
             leftcol.AppendLine($"{KillCount} enemies killed");
 
@@ -106,20 +109,23 @@ namespace FStats.StatControllers
             if (DeathCount > 0)
             {
                 rightcol.AppendLine($"{DeathCount} deaths");
-                rightcol.AppendLine(Common.Instance.GetTimePercentString(TimeWithoutShade, "without shade"));
+                rightcol.AppendLine(coll.Get<Common>().GetTimePercentString(TimeWithoutShade, "without shade"));
                 if (GeoLostToDeaths > 0) rightcol.AppendLine($"{GeoLostToDeaths} geo lost to deaths");
             }
-            rightcol.AppendLine(Common.Instance.GetTimePercentString(TimeAtOneHP, "at 1HP"));
+            rightcol.AppendLine(coll.Get<Common>().GetTimePercentString(TimeAtOneHP, "at 1HP"));
 
             string LeftColumn = leftcol.ToString();
             string RightColumn = rightcol.ToString();
 
             yield return new()
             {
-                Title = "Combat Stats",
+                Title = "Combat Stats" + SaveFileCountString(),
                 StatColumns = new() { LeftColumn, RightColumn },
                 Priority = BuiltinScreenPriorityValues.CombatStats,
             };
         }
+
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
     }
 }

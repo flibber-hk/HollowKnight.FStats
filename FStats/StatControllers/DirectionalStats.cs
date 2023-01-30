@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FStats.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,15 +18,18 @@ namespace FStats.StatControllers
         public override void Initialize() { }
         public override void Unload() { }
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
-            HeroActionStats has = FStatsMod.LS.Get<HeroActionStats>();
+            IStatCollection coll = global ? FStatsMod.GlobalStats : FStatsMod.LS;
+
+            HeroActionStats has = coll.Get<HeroActionStats>();
+            Common common = coll.Get<Common>();
 
             StringBuilder leftSB = new();
             StringBuilder rightSB = new();
 
-            leftSB.AppendLine(Common.Instance.GetTimePercentString(Common.Instance.CountedTime - has.FacingRightTime, "facing left"));
-            rightSB.AppendLine(Common.Instance.GetTimePercentString(has.FacingRightTime, "facing right"));
+            leftSB.AppendLine(common.GetTimePercentString(common.CountedTime - has.FacingRightTime, "facing left"));
+            rightSB.AppendLine(common.GetTimePercentString(has.FacingRightTime, "facing right"));
 
             leftSB.AppendLine($"{has.DashCountLeft} left dashes");
             rightSB.AppendLine($"{has.DashCountRight} right dashes");
@@ -38,10 +42,13 @@ namespace FStats.StatControllers
 
             yield return new()
             {
-                Title = "Directional Stats",
+                Title = "Directional Stats" + SaveFileCountString(),
                 StatColumns = new() { leftSB.ToString(), rightSB.ToString() },
                 Priority = BuiltinScreenPriorityValues.DirectionalStats,
             };
         }
+
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
     }
 }
