@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FStats.Interfaces;
 using FStats.Util;
 using GlobalEnums;
 using Modding;
@@ -160,8 +161,10 @@ namespace FStats.StatControllers
         }
 
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
+            IStatCollection coll = global ? FStatsMod.GlobalStats : FStatsMod.LS;
+
             bool FilterTransitionType(TransitionType t)
             {
                 if (t == TransitionType.Left || t == TransitionType.Right || t == TransitionType.Top || t == TransitionType.Bottom) return true;
@@ -187,11 +190,14 @@ namespace FStats.StatControllers
 
             yield return new()
             {
-                Title = "Transition Stats",
-                MainStat = $"Time transitioning: {Common.Instance.GetTimePercentString(TransitionTime)}",
+                Title = "Transition Stats" + SaveFileCountString(),
+                MainStat = $"Time transitioning: {coll.Get<Common>().GetTimePercentString(TransitionTime)}",
                 StatColumns = new() { leftCol.ToString(), rightCol.ToString() },
                 Priority = BuiltinScreenPriorityValues.TransitionStats,
             };
         }
+
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
     }
 }

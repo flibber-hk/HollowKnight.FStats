@@ -111,7 +111,7 @@ namespace FStats.StatControllers.ModConditional
         {
             Events.OnBenchwarp -= OnBenchwarp;
         }
-        public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
+        private IEnumerable<DisplayInfo> ConditionalGetDisplayInfosBoth(bool global)
         {
             if (BenchwarpCount.Values.Sum() == 0)
             {
@@ -122,12 +122,15 @@ namespace FStats.StatControllers.ModConditional
 
             DisplayInfo template = new()
             {
-                Title = "Bench Warps",
+                Title = "Bench Warps" + SaveFileCountString(),
                 MainStat = $"Total warps: {BenchwarpCount.Values.Sum()}",
                 Priority = BuiltinScreenPriorityValues.BenchwarpStats,
             };
 
-            return ColumnUtility.CreateDisplay(template, warpInfo, singlePage: true, maxColumnsPerPage: 3);
+            return ColumnUtility.CreateDisplay(template, warpInfo, singlePage: global, maxColumnsPerPage: 3);
         }
+
+        public override IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos() => ConditionalGetDisplayInfosBoth(global: true);
+        public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos() => ConditionalGetDisplayInfosBoth(global: false);
     }
 }

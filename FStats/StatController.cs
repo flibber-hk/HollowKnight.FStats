@@ -33,8 +33,10 @@ namespace FStats
 
         /// <summary>
         /// The number of save files this StatController has been initialized with.
-        /// This quantity will only be positive if this is associated with the GlobalSettings.
+        /// This quantity will be positive if and only if this is associated with the GlobalSettings.
         /// </summary>
         [JsonProperty] public int FileCount { get; internal set; } = 0;
+        protected string SaveFileCountString() => IsGlobal ? $" across {FileCount} save files" : string.Empty;
+        [JsonIgnore] public bool IsGlobal => FileCount > 0;
     }
 }
