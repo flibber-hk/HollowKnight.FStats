@@ -16,11 +16,21 @@ namespace FStats
         {
             LS?.Unload();
             LS = ls;
+            GlobalStats?.Unload();
         }
 
         public static GlobalSettings GS = new();
-        public GlobalSettings OnSaveGlobal() => GS;
-        public void OnLoadGlobal(GlobalSettings gs) => GS.LoadFrom(gs);
+        internal static GlobalStatManager GlobalStats;
+        public GlobalSettings OnSaveGlobal()
+        {
+            GlobalStats.Save();
+            return GS;
+        }
+        public void OnLoadGlobal(GlobalSettings gs)
+        {
+            GlobalStats = GlobalStatManager.Load();
+            GS.LoadFrom(gs);
+        }
 
         public FStatsMod() : base(null)
         {
@@ -45,22 +55,48 @@ namespace FStats
             EndScreen.EndScreenManager.Hook();
         }
 
+
+        private void StartStats(bool newGame)
+        {
+            if (LS is null) return;
+            if (LocalSettings.Loaded)
+            {
+                LogDebug("Not starting stats: Local Settings already loaded");
+                return;
+            }
+
+            LS.Initialize(newGame);
+            if (newGame)
+            {
+                int count = GlobalStats?.InitializeAll() ?? 0;
+                LS.GlobalStatControllerCount = count;
+            }
+            else
+            {
+                int count = LS.GlobalStatControllerCount;
+                GlobalStats?.Initialize(count);
+            }
+        }
+
+
         private void ModHooks_NewGameHook()
         {
             // Called by ItemChanger on new game with a changed start
-            LS.InitializedOnNewGame = true;
+            StartStats(true);
         }
 
         private void GameManager_ContinueGame(On.GameManager.orig_ContinueGame orig, GameManager self)
         {
             orig(self);
-            LS?.Initialize(newGame: false);
+
+            StartStats(false);
         }
 
         private void GameManager_StartNewGame(On.GameManager.orig_StartNewGame orig, GameManager self, bool permadeathMode, bool bossRushMode)
         {
             orig(self, permadeathMode, bossRushMode);
-            LS?.Initialize(newGame: true);
+
+            StartStats(true);
         }
     }
 }
