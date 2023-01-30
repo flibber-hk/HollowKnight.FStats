@@ -64,7 +64,7 @@ namespace FStats.StatControllers.ModConditional
                 .Sum();
 
             List<string> Lines = new();
-            TimeByAreaStat tba = FStatsMod.LS.Get<TimeByAreaStat>();
+            TimeByAreaStat tba = GetOwningCollection().Get<TimeByAreaStat>();
             if (tba is null)
             {
                 yield break;

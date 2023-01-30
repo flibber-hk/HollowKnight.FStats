@@ -39,7 +39,7 @@ namespace FStats.StatControllers.ModConditional
             if (_modsAvailable) OnUnload();
         }
 
-        public abstract IEnumerable<DisplayInfo> ConditionalGetDisplayInfos();
+        public virtual IEnumerable<DisplayInfo> ConditionalGetDisplayInfos() => Enumerable.Empty<DisplayInfo>();
         public sealed override IEnumerable<DisplayInfo> GetDisplayInfos()
         {
             if (!_modsAvailable)
@@ -51,7 +51,7 @@ namespace FStats.StatControllers.ModConditional
         }
 
 
-        public abstract IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos();
+        public virtual IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos() => Enumerable.Empty<DisplayInfo>();
         public sealed override IEnumerable<DisplayInfo> GetGlobalDisplayInfos()
         {
             if (!_modsAvailable)

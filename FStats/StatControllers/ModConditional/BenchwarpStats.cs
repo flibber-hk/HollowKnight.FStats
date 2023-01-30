@@ -127,7 +127,7 @@ namespace FStats.StatControllers.ModConditional
                 Priority = BuiltinScreenPriorityValues.BenchwarpStats,
             };
 
-            return ColumnUtility.CreateDisplay(template, warpInfo, singlePage: global, maxColumnsPerPage: 3);
+            return ColumnUtility.CreateDisplay(template, warpInfo, singlePage: !global, maxColumnsPerPage: 3);
         }
 
         public override IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos() => ConditionalGetDisplayInfosBoth(global: true);

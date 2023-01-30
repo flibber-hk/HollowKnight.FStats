@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FStats.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,5 +39,11 @@ namespace FStats
         [JsonProperty] public int FileCount { get; internal set; } = 0;
         protected string SaveFileCountString() => IsGlobal ? $" across {FileCount} save files" : string.Empty;
         [JsonIgnore] public bool IsGlobal => FileCount > 0;
+
+        /// <summary>
+        /// Get the collection of stats this is a part of - global stats if this is global,
+        /// save stats otherwise.
+        /// </summary>
+        protected IStatCollection GetOwningCollection() => IsGlobal ? FStatsMod.GlobalStats : FStatsMod.LS;
     }
 }

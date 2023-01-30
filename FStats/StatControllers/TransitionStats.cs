@@ -163,8 +163,6 @@ namespace FStats.StatControllers
 
         private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
         {
-            IStatCollection coll = global ? FStatsMod.GlobalStats : FStatsMod.LS;
-
             bool FilterTransitionType(TransitionType t)
             {
                 if (t == TransitionType.Left || t == TransitionType.Right || t == TransitionType.Top || t == TransitionType.Bottom) return true;
@@ -191,7 +189,7 @@ namespace FStats.StatControllers
             yield return new()
             {
                 Title = "Transition Stats" + SaveFileCountString(),
-                MainStat = $"Time transitioning: {coll.Get<Common>().GetTimePercentString(TransitionTime)}",
+                MainStat = $"Time transitioning: {GetOwningCollection().Get<Common>().GetTimePercentString(TransitionTime)}",
                 StatColumns = new() { leftCol.ToString(), rightCol.ToString() },
                 Priority = BuiltinScreenPriorityValues.TransitionStats,
             };

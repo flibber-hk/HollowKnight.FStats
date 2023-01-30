@@ -79,7 +79,7 @@ namespace FStats.StatControllers.ModConditional
                 .DefaultIfEmpty(0)
                 .Sum();
 
-            List<string> Lines = FStatsMod.LS.Get<TimeByAreaStat>().AreaOrder
+            List<string> Lines = GetOwningCollection().Get<TimeByAreaStat>().AreaOrder
                 .Select(area => $"{area} - {ObtainedByArea(area)}/{ItemsByArea(area)}")
                 .ToList();
 

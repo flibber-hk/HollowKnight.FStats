@@ -71,6 +71,7 @@ namespace FStats.StatControllers
         {
             if (BoolNames.ContainsKey(s) && !SkillObtainTimeline.ContainsKey(s))
             {
+                // Get from the local settings when recording
                 SkillObtainTimeline[s] = FStatsMod.LS.Get<Common>().CountedTime;
             }
         }
@@ -93,7 +94,7 @@ namespace FStats.StatControllers
             DisplayInfo template = new()
             {
                 Title = "Skill Timeline",
-                MainStat = FStatsMod.LS.Get<Common>().TotalTimeString,
+                MainStat = GetOwningCollection().Get<Common>().TotalTimeString,
                 Priority = BuiltinScreenPriorityValues.SkillTimeline,
             };
 

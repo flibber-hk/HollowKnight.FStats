@@ -162,7 +162,7 @@ namespace FStats.StatControllers
             ModHooks.HeroUpdateHook -= UpdateTimers;
         }
 
-        private IEnumerable<DisplayInfo> GetDisplayInfosBoth(bool global)
+        private IEnumerable<DisplayInfo> GetDisplayInfosBoth()
         {
             StringBuilder leftcol = new();
             StringBuilder rightcol = new();
@@ -191,7 +191,7 @@ namespace FStats.StatControllers
             };
         }
 
-        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth(global: true);
-        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth(global: false);
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos() => GetDisplayInfosBoth();
+        public override IEnumerable<DisplayInfo> GetDisplayInfos() => GetDisplayInfosBoth();
     }
 }
