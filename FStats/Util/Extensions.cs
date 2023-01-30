@@ -62,6 +62,17 @@ namespace FStats.Util
             return dict[key];
         }
 
+        public static float IncreaseValue<TKey>(this Dictionary<TKey, float> dict, TKey key, float increment)
+        {
+            if (!dict.ContainsKey(key))
+            {
+                dict[key] = 0;
+            }
+            dict[key] += increment;
+
+            return dict[key];
+        }
+
         /// <summary>
         /// Return an enumerable with elements moved to the end of the input until the first element 
         /// matching the selector is reached.
