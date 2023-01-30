@@ -2,19 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FStats
 {
     public class LocalSettings
     {
         /// <summary>
-        /// Whether these local settings saw the save file being created
+        /// Whether these local settings saw the save file being created.
         /// </summary>
         public bool InitializedOnNewGame { get; set; }
 
-        internal static bool Loaded = false;
+        /// <summary>
+        /// The number of Global Stat Controllers associated with this save file.
+        /// </summary>
+        public int GlobalStatControllerCount { get; set; }
+
+        internal static bool Loaded { get; private set; } = false;
 
         public List<StatController> Data;
 
