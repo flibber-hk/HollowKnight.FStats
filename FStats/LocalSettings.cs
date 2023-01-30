@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using FStats.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace FStats
 {
-    public class LocalSettings
+    public class LocalSettings : IStatCollection
     {
         /// <summary>
         /// Whether these local settings saw the save file being created.
