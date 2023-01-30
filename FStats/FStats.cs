@@ -20,13 +20,21 @@ namespace FStats
         public static GlobalStatManager GlobalStats { get; set; }
         public GlobalSettings OnSaveGlobal()
         {
-            GlobalStatManager.Save(GlobalStats);
+            try
+            {
+                GlobalStatManager.Save(GlobalStats);
+            }
+            catch (Exception e)
+            {
+                LogError("Error saving global stats" + e);
+            }
+
             return GS;
         }
         public void OnLoadGlobal(GlobalSettings gs)
         {
-            GlobalStats = GlobalStatManager.Load();
             GS.LoadFrom(gs);
+            GlobalStats = GlobalStatManager.Load();
         }
 
         public FStatsMod() : base(null)
