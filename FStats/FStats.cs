@@ -1,9 +1,10 @@
 using Modding;
 using System;
+using System.Collections.Generic;
 
 namespace FStats
 {
-    public class FStatsMod : Mod, ILocalSettings<LocalSettings>, IGlobalSettings<GlobalSettings>
+    public class FStatsMod : Mod, ILocalSettings<LocalSettings>, IGlobalSettings<GlobalSettings>, IMenuMod
     {
         internal static FStatsMod instance;
 
@@ -36,6 +37,9 @@ namespace FStats
             GS.LoadFrom(gs);
             GlobalStats = GlobalStatManager.Load();
         }
+
+        bool IMenuMod.ToggleButtonInsideMenu => false;
+        List<IMenuMod.MenuEntry> IMenuMod.GetMenuData(IMenuMod.MenuEntry? toggleButtonEntry) => ModMenu.GetMenuData();
 
         public FStatsMod() : base(null)
         {
