@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FStats.EndScreen
 {
@@ -16,12 +18,22 @@ namespace FStats.EndScreen
     /// </summary>
     public class NavigationManager
     {
-        private List<DisplayInfo> displayInfos;
-        private int current = 0;
+        private readonly List<DisplayInfo> _displayInfos;
+        private readonly List<DisplayInfo> _globalDisplayInfos;
 
-        public NavigationManager(List<DisplayInfo> infos, out DisplayInfo initial)
+        private int currentIndex = 0;
+        private bool currentGlobal = false;
+
+        private List<DisplayInfo> CurrentList => currentGlobal ? _globalDisplayInfos : _displayInfos;
+        private List<DisplayInfo> OtherList => currentGlobal ? _displayInfos : _globalDisplayInfos;
+
+        private DisplayInfo Current => CurrentList[currentIndex];
+
+        public NavigationManager(List<DisplayInfo> infos, List<DisplayInfo> globalInfos, out DisplayInfo initial)
         {
-            displayInfos = new(infos);
+            _displayInfos = new(infos);
+            _globalDisplayInfos = new(globalInfos);
+
             initial = infos[0];
         }
 
@@ -30,22 +42,42 @@ namespace FStats.EndScreen
             switch (dir)
             {
                 case NavigationDirection.Left:
-                    current = (current - 1 + displayInfos.Count) % displayInfos.Count;
-                    next = displayInfos[current];
+                    currentIndex = (currentIndex - 1 + CurrentList.Count) % CurrentList.Count;
+                    next = CurrentList[currentIndex];
                     return true;
                 case NavigationDirection.Right:
-                    current = (current + 1) % displayInfos.Count;
-                    next = displayInfos[current];
+                    currentIndex = (currentIndex + 1) % CurrentList.Count;
+                    next = CurrentList[currentIndex];
                     return true;
-                case NavigationDirection.None:
                 case NavigationDirection.Up:
                 case NavigationDirection.Down:
-                    next = default;
-                    return false;
+                    return TrySwitch(out next);
             }
 
             next = default;
             return false;
+        }
+
+        private bool TrySwitch(out DisplayInfo next)
+        {
+            if (_globalDisplayInfos.Count == 0)
+            {
+                next = default;
+                return false;
+            }
+
+            // Cringe code but I'm not sure what the best way to do this is :zota:
+            double currentPriority = Current.Priority;
+            double priorityOffset = OtherList.Select(x => Math.Abs(x.Priority - currentPriority)).Min();
+            int newIndex = Enumerable.Range(0, OtherList.Count)
+                .Where(x => Math.Abs(OtherList[x].Priority - currentPriority) == priorityOffset)
+                .First();
+
+            currentIndex = newIndex;
+            currentGlobal = !currentGlobal;
+
+            next = Current;
+            return true;
         }
     }
 }

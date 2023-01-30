@@ -66,22 +66,16 @@ namespace FStats.EndScreen
 
             if (infos.Count == 0) return;
 
+            List<DisplayInfo> globalInfos = FStatsMod.GlobalStats.GenerateDisplays();
 
             // Set up the screen
             EndScreenObjectHolder holder = EndScreenObjectHolder.Setup(self);
-            NavigationManager nav = new(infos, out DisplayInfo initial);
+            NavigationManager nav = new(infos, globalInfos, out DisplayInfo initial);
 
             StatScreenCycler cyc = self.playTimeNumber.gameObject.AddComponent<StatScreenCycler>();
             cyc.ObjectHolder = holder;
             cyc.NavigationManager = nav;
             cyc.OnStart += () => holder.Display(initial);
-        }
-
-        private static void MoveUp(Transform t, float dist)
-        {
-            Vector3 pos = t.position;
-            pos.y += dist;
-            t.position = pos;
         }
     }
 }

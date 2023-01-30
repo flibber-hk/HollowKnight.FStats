@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using FStats.Util;
 using Modding;
 using Newtonsoft.Json;
@@ -13,8 +11,10 @@ namespace FStats.StatControllers
     /// </summary>
     public class Common : StatController
     {
-        // TODO - make a common interface to get stats?
-        [Obsolete("Use FStatsMod.LS.Get<Common>() to get the local instance")] public static Common Instance => FStatsMod.LS.Get<Common>();
+        private const string _deprecationMessage = "Use FStatsMod.LS.Get<Common>() to get the local instance, or "
+            + "\nGetOwningCollection().Get<Common>() to get the current associated instance to a given StatController.";
+
+        [Obsolete(_deprecationMessage)] public static Common Instance => FStatsMod.LS.Get<Common>();
 
         public float CountedTime = 0f;
 

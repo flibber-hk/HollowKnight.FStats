@@ -90,6 +90,14 @@ namespace FStats
             return TrackedStats.OfType<T>().FirstOrDefault();
         }
 
+        IEnumerable<StatController> IStatCollection.EnumerateActiveStats()
+        {
+            for (int i = 0; i < _loadedCount; i++)
+            {
+                yield return TrackedStats[i];
+            }
+        }
+
         internal void AddGlobalStats()
         {
             foreach ((Type t, Func<StatController> maker) in API.GlobalStatTypes)
