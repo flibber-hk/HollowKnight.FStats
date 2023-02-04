@@ -51,10 +51,15 @@ namespace FStats
         bool IMenuMod.ToggleButtonInsideMenu => false;
         List<IMenuMod.MenuEntry> IMenuMod.GetMenuData(IMenuMod.MenuEntry? toggleButtonEntry) => ModMenu.GetMenuData();
 
+        static FStatsMod()
+        {
+            // Load during the static constructor so it is available during deserialization
+            AreaName.LoadData();
+        }
+
         public FStatsMod() : base(null)
         {
             instance = this;
-            AreaName.LoadData();
         }
         
         public override string GetVersion()
@@ -74,7 +79,10 @@ namespace FStats
             EndScreen.EndScreenManager.Hook();
 
             RegisterInternalGlobalStats();
-            ModHooks.FinishedLoadingModsHook += () => GlobalStats.AddGlobalStats();
+            if (GlobalStats is not null)
+            {
+                ModHooks.FinishedLoadingModsHook += () => GlobalStats.AddGlobalStats();
+            }
         }
 
         private void RegisterInternalGlobalStats()

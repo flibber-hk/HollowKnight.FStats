@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FStats.Util;
 using Modding;
+using Newtonsoft.Json;
 
 namespace FStats.StatControllers
 {
@@ -52,7 +53,7 @@ namespace FStats.StatControllers
         /// <summary>
         /// The order the areas are displayed on the Time by Area screen.
         /// </summary>
-        public List<string> AreaOrder
+        [JsonIgnore] public List<string> AreaOrder
         {
             get
             {
