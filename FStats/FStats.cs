@@ -106,7 +106,7 @@ namespace FStats
             }
             else
             {
-                List<string> associated = LS.ActiveGlobalStats;
+                List<string> associated = LS.ActiveGlobalStats ?? new();
                 List<string> active = GlobalStats?.Initialize(associated) ?? new();
                 LS.ActiveGlobalStats = active;
             }
