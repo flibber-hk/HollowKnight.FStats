@@ -89,6 +89,7 @@ namespace FStats
         {
             API.RegisterGlobalStat<StatControllers.Common>();
             API.RegisterGlobalStat<StatControllers.TimeByAreaStat>();
+            API.RegisterGlobalStat<StatControllers.ModConditional.ItemSyncData>();
             API.RegisterGlobalStat<StatControllers.HeroActionStats>();
             API.RegisterGlobalStat<StatControllers.DirectionalStats>();
             API.RegisterGlobalStat<StatControllers.CombatStats>();
@@ -97,6 +98,12 @@ namespace FStats
             API.RegisterGlobalStat<StatControllers.ModConditional.BenchwarpStats>();
             API.RegisterGlobalStat<StatControllers.MiscStats>();
         }
+
+        /// <summary>
+        /// During stat controller initialization, this will be set to true if it is a new game and false otherwise.
+        /// At other times this will be null.
+        /// </summary>
+        public static InitializationState? InitializationState { get; private set; }
 
         private void StartStats(bool newGame)
         {
@@ -107,18 +114,31 @@ namespace FStats
                 return;
             }
 
-            LS.Initialize(newGame);
-            if (newGame)
-            {
-                List<string> loadedStats = GlobalStats?.InitializeAll() ?? new();
-                LS.ActiveGlobalStats = loadedStats;
-            }
-            else
-            {
-                List<string> associated = LS.ActiveGlobalStats ?? new();
-                List<string> active = GlobalStats?.Initialize(associated) ?? new();
+            InitializationState = newGame ? FStats.InitializationState.NewGame : FStats.InitializationState.ExistingGame;
 
-                LS.ActiveGlobalStats = active;
+            try
+            {
+                LS.Initialize(newGame);
+                if (newGame)
+                {
+                    List<string> loadedStats = GlobalStats?.InitializeAll() ?? new();
+                    LS.ActiveGlobalStats = loadedStats;
+                }
+                else
+                {
+                    List<string> associated = LS.ActiveGlobalStats ?? new();
+                    List<string> active = GlobalStats?.Initialize(associated) ?? new();
+
+                    LS.ActiveGlobalStats = active;
+                }
+            }
+            catch (Exception e)
+            {
+                LogError("Error initializing stat controllers:\n" + e);
+            }
+            finally
+            {
+                InitializationState = null;
             }
         }
 
