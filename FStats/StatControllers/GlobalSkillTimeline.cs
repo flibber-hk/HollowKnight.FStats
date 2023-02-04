@@ -22,9 +22,9 @@ namespace FStats.StatControllers
             if (!SkillObtainCounts.TryGetValue(key, out int count)) return string.Empty;
             if (count == 0) return string.Empty;
 
-            string fileOrFiles = count == 1 ? "(1)" : $"({count} files)";
+            string fileOrFiles = count == 1 ? "(1 file)" : $"({count} files)";
 
-            return $"{key}: {AverageTime(key).PlaytimeHHMMSS()} {fileOrFiles}";
+            return $"{BoolNames[key]}: {AverageTime(key).PlaytimeHHMMSS()} {fileOrFiles}";
         }
 
 
