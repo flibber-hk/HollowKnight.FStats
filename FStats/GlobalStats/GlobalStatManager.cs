@@ -38,7 +38,7 @@ namespace FStats.GlobalStats
         {
             foreach ((Type t, Func<StatController> maker) in API.GlobalStatTypes)
             {
-                string typeName = t.FullName;
+                string typeName = t.AssemblyQualifiedName;
 
                 if (TrackedStats.ContainsKey(typeName)) continue;
                 _logger.LogDebug($"Adding new {typeName}");
