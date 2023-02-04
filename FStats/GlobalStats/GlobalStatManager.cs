@@ -1,11 +1,7 @@
 ﻿using FStats.Interfaces;
-using Modding.Patches;
 using Modding;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace FStats.GlobalStats
@@ -14,9 +10,15 @@ namespace FStats.GlobalStats
     {
         private static readonly ILogger _logger = new SimpleLogger("FStats.GlobalStatManager");
 
-        private List<string> _loadedStats { get; set; }
+        /// <summary>
+        /// The names of stats that are currently loaded.
+        /// null => stats haven't been loaded yet.
+        /// </summary>
+        private List<string> LoadedStatNames { get; set; }
 
-        private GlobalStatData _serializedData;
+        /// <summary>
+        /// Dictionary (type full name) -> (stat controller of that type).
+        /// </summary>
         internal Dictionary<string, StatController> TrackedStats { get; }
 
         public T Get<T>() where T : StatController
@@ -26,7 +28,7 @@ namespace FStats.GlobalStats
 
         IEnumerable<StatController> IStatCollection.EnumerateActiveStats()
         {
-            foreach (string typeName in _loadedStats ?? Enumerable.Empty<string>())
+            foreach (string typeName in LoadedStatNames ?? Enumerable.Empty<string>())
             {
                 yield return TrackedStats[typeName];
             }
@@ -54,7 +56,7 @@ namespace FStats.GlobalStats
         {
             if (!FStatsMod.GS.TrackGlobalStats) return new();
 
-            if (_loadedStats is not null) return new(_loadedStats);
+            if (LoadedStatNames is not null) return new(LoadedStatNames);
 
             List<string> loadedTypeNames = new();
             foreach (string typeName in typeNames)
@@ -72,31 +74,31 @@ namespace FStats.GlobalStats
         {
             if (!FStatsMod.GS.TrackGlobalStats) return new();
 
-            if (_loadedStats is not null)
+            if (LoadedStatNames is not null)
             {
-                return new(_loadedStats);
+                return new(LoadedStatNames);
             }
 
-            _loadedStats = new();
+            LoadedStatNames = new();
 
             foreach ((string typeName, StatController sc) in TrackedStats)
             {
                 if (sc is null) continue;
                 sc.Initialize();
                 sc.FileCount += 1;
-                _loadedStats.Add(typeName);
+                LoadedStatNames.Add(typeName);
             }
 
-            return _loadedStats;
+            return LoadedStatNames;
         }
 
         public void Unload()
         {
-            foreach (string typeName in _loadedStats ?? Enumerable.Empty<string>())
+            foreach (string typeName in LoadedStatNames ?? Enumerable.Empty<string>())
             {
                 TrackedStats[typeName]?.Unload();
             }
-            _loadedStats = null;
+            LoadedStatNames = null;
         }
 
         public List<DisplayInfo> GenerateDisplays()
@@ -109,7 +111,7 @@ namespace FStats.GlobalStats
 
             List<DisplayInfo> infos = new();
 
-            foreach (string typeName in _loadedStats ?? Enumerable.Empty<string>())
+            foreach (string typeName in LoadedStatNames ?? Enumerable.Empty<string>())
             {
                 StatController sc = TrackedStats[typeName];
                 if (!FStatsMod.GS.ShouldDisplay(sc)) continue;
