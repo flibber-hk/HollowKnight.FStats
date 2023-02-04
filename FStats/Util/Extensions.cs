@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Modding;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -73,6 +74,17 @@ namespace FStats.Util
             return dict[key];
         }
 
+        public static int IncreaseValue<TKey>(this Dictionary<TKey, int> dict, TKey key, int increment)
+        {
+            if (!dict.ContainsKey(key))
+            {
+                dict[key] = 0;
+            }
+            dict[key] += increment;
+
+            return dict[key];
+        }
+
         /// <summary>
         /// Return an enumerable with elements moved to the end of the input until the first element 
         /// matching the selector is reached.
@@ -126,5 +138,38 @@ namespace FStats.Util
 
             yield return new(accumulator);
         }
+
+        public static void Add<T>(this Dictionary<T, int> self, Dictionary<T, int> other)
+        {
+            foreach ((T key, int value) in other)
+            {
+                self.IncreaseValue(key, value);
+            }
+        }
+
+        public static void Subtract<T>(this Dictionary<T, int> self, Dictionary<T, int> other)
+        {
+            foreach ((T key, int value) in other)
+            {
+                self.IncreaseValue(key, -value);
+            }
+        }
+
+        public static void Add<T>(this Dictionary<T, float> self, Dictionary<T, float> other)
+        {
+            foreach ((T key, float value) in other)
+            {
+                self.IncreaseValue(key, value);
+            }
+        }
+
+        public static void Subtract<T>(this Dictionary<T, float> self, Dictionary<T, float> other)
+        {
+            foreach ((T key, float value) in other)
+            {
+                self.IncreaseValue(key, -value);
+            }
+        }
+
     }
 }
