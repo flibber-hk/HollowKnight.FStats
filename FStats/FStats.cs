@@ -93,6 +93,7 @@ namespace FStats
             API.RegisterGlobalStat<StatControllers.DirectionalStats>();
             API.RegisterGlobalStat<StatControllers.CombatStats>();
             API.RegisterGlobalStat<StatControllers.TransitionStats>();
+            API.RegisterGlobalStat<StatControllers.GlobalSkillTimeline>();
             API.RegisterGlobalStat<StatControllers.ModConditional.BenchwarpStats>();
             API.RegisterGlobalStat<StatControllers.MiscStats>();
         }
