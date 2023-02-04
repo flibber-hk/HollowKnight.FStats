@@ -23,7 +23,7 @@ namespace FStats.GlobalStats
 
         public T Get<T>() where T : StatController
         {
-            return TrackedStats.OfType<T>().FirstOrDefault();
+            return TrackedStats.Values.OfType<T>().FirstOrDefault();
         }
 
         IEnumerable<StatController> IStatCollection.EnumerateActiveStats()
@@ -67,6 +67,7 @@ namespace FStats.GlobalStats
                     sc.Initialize();
                 }
             }
+            LoadedStatNames = new(loadedTypeNames);
             return loadedTypeNames;
         }
 

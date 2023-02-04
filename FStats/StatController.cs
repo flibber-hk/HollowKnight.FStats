@@ -37,7 +37,14 @@ namespace FStats
         /// This quantity will be positive if and only if this is associated with the GlobalSettings.
         /// </summary>
         [JsonProperty] public int FileCount { get; internal set; } = 0;
-        protected string SaveFileCountString() => IsGlobal ? $" across {FileCount} save files" : string.Empty;
+        protected string SaveFileCountString()
+        {
+            if (!IsGlobal) return string.Empty;
+
+            string s = $" across {FileCount} save file";
+            if (FileCount != 1) s += "s";
+            return s;
+        }
         [JsonIgnore] public bool IsGlobal => FileCount > 0;
 
         /// <summary>

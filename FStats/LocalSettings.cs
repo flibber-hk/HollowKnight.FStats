@@ -13,7 +13,7 @@ namespace FStats
         public bool InitializedOnNewGame { get; set; }
 
         /// <summary>
-        /// The number of Global Stat Controllers associated with this save file.
+        /// The names of Global Stat Controllers associated with this save file.
         /// </summary>
         public List<string> ActiveGlobalStats { get; set; }
 

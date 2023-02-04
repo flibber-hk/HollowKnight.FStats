@@ -63,7 +63,7 @@ namespace FStats.StatControllers
             }
         }
 
-        public override IEnumerable<DisplayInfo> GetDisplayInfos()
+        public override IEnumerable<DisplayInfo> GetGlobalDisplayInfos()
         {
             List<string> lines = BoolNames
                 .Where(kvp => SkillObtainTimes.ContainsKey(kvp.Key) && SkillObtainCounts.TryGetValue(kvp.Key, out int count) && count > 0)
