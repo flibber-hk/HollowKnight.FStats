@@ -85,8 +85,8 @@ namespace FStats.GlobalStats
             foreach ((string typeName, StatController sc) in TrackedStats)
             {
                 if (sc is null) continue;
-                sc.Initialize();
                 sc.FileCount += 1;
+                sc.Initialize();
                 LoadedStatNames.Add(typeName);
             }
 

@@ -139,6 +139,11 @@ namespace FStats.Util
             yield return new(accumulator);
         }
 
+        /// <summary>
+        /// Increase the values in the dictionary according to another dictionary.
+        /// </summary>
+        /// <param name="self">The dictionary that is modified in-place.</param>
+        /// <param name="other">The dictionary of increments; this is not modified.</param>
         public static void Add<T>(this Dictionary<T, int> self, Dictionary<T, int> other)
         {
             foreach ((T key, int value) in other)
@@ -146,6 +151,12 @@ namespace FStats.Util
                 self.IncreaseValue(key, value);
             }
         }
+
+        /// <summary>
+        /// Reduce the values in the dictionary according to another dictionary.
+        /// </summary>
+        /// <param name="self">The dictionary that is modified in-place.</param>
+        /// <param name="other">The dictionary of increments; this is not modified.</param>
 
         public static void Subtract<T>(this Dictionary<T, int> self, Dictionary<T, int> other)
         {
@@ -155,6 +166,11 @@ namespace FStats.Util
             }
         }
 
+        /// <summary>
+        /// Increase the values in the dictionary according to another dictionary.
+        /// </summary>
+        /// <param name="self">The dictionary that is modified in-place.</param>
+        /// <param name="other">The dictionary of increments; this is not modified.</param>
         public static void Add<T>(this Dictionary<T, float> self, Dictionary<T, float> other)
         {
             foreach ((T key, float value) in other)
@@ -163,6 +179,11 @@ namespace FStats.Util
             }
         }
 
+        /// <summary>
+        /// Reduce the values in the dictionary according to another dictionary.
+        /// </summary>
+        /// <param name="self">The dictionary that is modified in-place.</param>
+        /// <param name="other">The dictionary of increments; this is not modified.</param>
         public static void Subtract<T>(this Dictionary<T, float> self, Dictionary<T, float> other)
         {
             foreach ((T key, float value) in other)
