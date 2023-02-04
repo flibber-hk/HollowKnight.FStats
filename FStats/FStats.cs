@@ -1,3 +1,4 @@
+using FStats.GlobalStats;
 using Modding;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,11 @@ namespace FStats
         {
             try
             {
-                GlobalStatManager.Save(GlobalStats);
+                GlobalStatSerialization.Save(GlobalStats);
             }
             catch (Exception e)
             {
-                LogError("Error saving global stats" + e);
+                LogError("Error saving global stats: " + e);
             }
 
             return GS;
@@ -35,7 +36,16 @@ namespace FStats
         public void OnLoadGlobal(GlobalSettings gs)
         {
             GS.LoadFrom(gs);
-            GlobalStats = GlobalStatManager.Load();
+
+            try
+            {
+                GlobalStats = GlobalStatSerialization.Load();
+            }
+            catch(Exception e)
+            {
+                LogError("Error loading global stats: " + e);
+                GlobalStats = null;
+            }
         }
 
         bool IMenuMod.ToggleButtonInsideMenu => false;
@@ -91,13 +101,14 @@ namespace FStats
             LS.Initialize(newGame);
             if (newGame)
             {
-                int count = GlobalStats?.InitializeAll() ?? 0;
-                LS.GlobalStatControllerCount = count;
+                List<string> loadedStats = GlobalStats?.InitializeAll() ?? new();
+                LS.ActiveGlobalStats = loadedStats;
             }
             else
             {
-                int count = LS.GlobalStatControllerCount;
-                GlobalStats?.Initialize(count);
+                List<string> associated = LS.ActiveGlobalStats;
+                List<string> active = GlobalStats?.Initialize(associated) ?? new();
+                LS.ActiveGlobalStats = active;
             }
         }
 
