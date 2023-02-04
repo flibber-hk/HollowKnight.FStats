@@ -15,7 +15,7 @@ namespace FStats
         /// <summary>
         /// The number of Global Stat Controllers associated with this save file.
         /// </summary>
-        public int GlobalStatControllerCount { get; set; }
+        public List<string> ActiveGlobalStats { get; set; }
 
         internal static bool Loaded { get; private set; } = false;
 
