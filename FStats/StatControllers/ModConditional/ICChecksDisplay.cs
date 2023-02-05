@@ -18,6 +18,77 @@ namespace FStats.StatControllers.ModConditional
             yield return "ItemChangerMod";
         }
 
+        /// <summary>
+        /// Only assigned in a local stat controller.
+        /// </summary>
+        public bool EndScreenReached { get; set; } = false;
+
+        public int ItemChangerFileCount;
+
+        /// <summary>
+        /// The total number of items obtained by scene, excluding the current file.
+        /// </summary>
+        public Dictionary<string, int> ObtainedByScene { get; set; } = new();
+        /// <summary>
+        /// The total number of items placed by scene, excluding the current file.
+        /// </summary>
+        public Dictionary<string, int> TotalByScene { get; set; } = new();
+
+        public override void OnInitialize()
+        {
+            if (FStatsMod.LS.Get<ICChecksDisplay>()?.EndScreenReached != true)
+            {
+                return;
+            }
+
+            GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total);
+            ObtainedByScene.Subtract(obtained);
+            TotalByScene.Subtract(total);
+            ItemChangerFileCount -= 1;
+        }
+
+        public override void OnUnload()
+        {
+            if (FStatsMod.LS.Get<ICChecksDisplay>()?.EndScreenReached != true)
+            {
+                return;
+            }
+
+            GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total);
+            ObtainedByScene.Add(obtained);
+            TotalByScene.Add(total);
+            ItemChangerFileCount += 1;
+        }
+
+        public override IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos()
+        {
+            // Make new dictionaries so they don't get modified
+            Dictionary<string, int> obtainedToDisplay = new();
+            Dictionary<string, int> totalToDisplay = new();
+            obtainedToDisplay.Add(ObtainedByScene);
+            totalToDisplay.Add(TotalByScene);
+
+            if (ItemChanger.Internal.Ref.Settings != null)
+            {
+                GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total);
+                obtainedToDisplay.Add(obtained);
+                totalToDisplay.Add(total);
+            }
+
+            if (totalToDisplay.Values.Sum() == 0) yield break;
+
+            Render(obtainedToDisplay, totalToDisplay, out string mainStat, out List<string> statColumns);
+
+            yield return new()
+            {
+                Title = "Items Obtained" + SaveFileCountString(ItemChangerFileCount + 1),
+                MainStat = mainStat,
+                StatColumns = statColumns,
+                Priority = BuiltinScreenPriorityValues.ItemSyncData,
+            };
+        }
+
+
         public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
         {
             if (ItemChanger.Internal.Ref.Settings == null)
@@ -25,12 +96,65 @@ namespace FStats.StatControllers.ModConditional
                 yield break;
             }
 
-            Dictionary<string, int> obtained = new();
-            Dictionary<string, int> total = new();
+            if (!IsGlobal) EndScreenReached = true;
+
+            GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total);
+
+            if (total.Values.Sum() == 0)
+            {
+                yield break;
+            }
+
+            Render(obtained, total, out string mainStat, out List<string> statColumns);
+
+            yield return new()
+            {
+                Title = "Items Obtained",
+                MainStat = mainStat,
+                StatColumns = statColumns,
+                Priority = BuiltinScreenPriorityValues.ICChecksDisplay,
+            };
+        }
+
+        private void Render(Dictionary<string, int> obtained, Dictionary<string, int> total, out string mainStat, out List<string> statColumns)
+        {
+            int ObtainedByArea(string area) => obtained
+                .Where(kvp => AreaName.CleanAreaName(kvp.Key) == area)
+                .Select(kvp => kvp.Value)
+                .DefaultIfEmpty(0)
+                .Sum();
+            int ItemsByArea(string area) => total
+                .Where(kvp => AreaName.CleanAreaName(kvp.Key) == area)
+                .Select(kvp => kvp.Value)
+                .DefaultIfEmpty(0)
+                .Sum();
+
+            List<string> Lines = GetOwningCollection().Get<TimeByAreaStat>().AreaOrder
+                .Select(area => $"{area} - {ObtainedByArea(area)}/{ItemsByArea(area)}")
+                .ToList();
+
+            statColumns = new()
+            {
+                string.Join("\n", Lines.Slice(0, 2)),
+                string.Join("\n", Lines.Slice(1, 2)),
+            };
+
+            mainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()}";
+        }
+
+        /// <summary>
+        /// Gather the relevant data about the current ItemChanger save file.
+        /// </summary>
+        /// <param name="obtained">Dictionary scene -> obtained items in that scene.</param>
+        /// <param name="total">Dictionary scene -> placed items in that scene.</param>
+        public static void GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total)
+        {
+            obtained = new();
+            total = new();
 
             foreach (AbstractPlacement pmt in ItemChanger.Internal.Ref.Settings.Placements.Values.SelectValidPlacements())
             {
-                if (pmt.Name == "Start") continue;
+                if (pmt.Name == LocationNames.Start) continue;
 
                 string scene = string.Empty;
                 if (pmt is IPrimaryLocationPlacement ip && ip.Location.name != LocationNames.Start)
@@ -52,35 +176,6 @@ namespace FStats.StatControllers.ModConditional
                     if (item.WasEverObtained()) obtained[scene]++;
                 }
             }
-
-            int ObtainedByArea(string area) => obtained
-                .Where(kvp => AreaName.CleanAreaName(kvp.Key) == area)
-                .Select(kvp => kvp.Value)
-                .DefaultIfEmpty(0)
-                .Sum();
-            int ItemsByArea(string area) => total
-                .Where(kvp => AreaName.CleanAreaName(kvp.Key) == area)
-                .Select(kvp => kvp.Value)
-                .DefaultIfEmpty(0)
-                .Sum();
-
-            List<string> Lines = GetOwningCollection().Get<TimeByAreaStat>().AreaOrder
-                .Select(area => $"{area} - {ObtainedByArea(area)}/{ItemsByArea(area)}")
-                .ToList();
-
-            List<string> Columns = new()
-            {
-                string.Join("\n", Lines.Slice(0, 2)),
-                string.Join("\n", Lines.Slice(1, 2)),
-            };
-
-            yield return new()
-            {
-                Title = "Items Obtained",
-                MainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()}",
-                StatColumns = Columns,
-                Priority = BuiltinScreenPriorityValues.ICChecksDisplay,
-            };
         }
     }
 

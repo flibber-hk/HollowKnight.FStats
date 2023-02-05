@@ -25,7 +25,7 @@ namespace FStats.StatControllers.ModConditional
 
             foreach (AbstractPlacement pmt in ItemChanger.Internal.Ref.Settings.Placements.Values.SelectValidPlacements())
             {
-                if (pmt.Name == "Start") continue;
+                if (pmt.Name == LocationNames.Start) continue;
 
                 string scene = string.Empty;
                 if (pmt is IPrimaryLocationPlacement ip && ip.Location.name != LocationNames.Start)

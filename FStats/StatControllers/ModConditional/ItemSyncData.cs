@@ -77,7 +77,7 @@ namespace FStats.StatControllers.ModConditional
 
             yield return new()
             {
-                Title = "Synced items picked up locally" + SaveFileCountString(ItemsyncFileCount),
+                Title = "Synced items picked up locally" + SaveFileCountString(ItemsyncFileCount + 1),
                 MainStat = mainStat,
                 StatColumns = statColumns,
                 Priority = BuiltinScreenPriorityValues.ItemSyncData,
@@ -136,7 +136,15 @@ namespace FStats.StatControllers.ModConditional
             mainStat = $"{obtained.Values.Sum()}/{total.Values.Sum()} ({Mathf.RoundToInt((float)obtained.Values.Sum() / total.Values.Sum() * 100.0f)}%)";
         }
 
-        private bool GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total)
+        /// <summary>
+        /// Gather the relevant data about the current ItemChanger save file.
+        /// It is safe to call this method even if ItemSync is not installed.
+        /// </summary>
+        /// <param name="obtained">Dictionary scene -> number of items obtained locally in that scene.</param>
+        /// <param name="total">Dictionary scene -> number of items obtained in that scene.</param>
+        /// <returns>True if this looks like an ItemSync file.
+        /// The obtained and total arguments will be properly assigned regardless of the return value.</returns>
+        public static bool GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total)
         {
             bool isItemsync = false;
 

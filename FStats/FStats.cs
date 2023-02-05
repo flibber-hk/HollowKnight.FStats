@@ -13,9 +13,9 @@ namespace FStats
         public LocalSettings OnSaveLocal() => LS;
         public void OnLoadLocal(LocalSettings ls)
         {
+            GlobalStats?.Unload();
             LS?.Unload();
             LS = ls;
-            GlobalStats?.Unload();
         }
 
         public static GlobalSettings GS = new();
@@ -95,6 +95,7 @@ namespace FStats
         {
             API.RegisterGlobalStat<StatControllers.Common>();
             API.RegisterGlobalStat<StatControllers.TimeByAreaStat>();
+            API.RegisterGlobalStat<StatControllers.ModConditional.ICChecksDisplay>();
             API.RegisterGlobalStat<StatControllers.ModConditional.ItemSyncData>();
             API.RegisterGlobalStat<StatControllers.HeroActionStats>();
             API.RegisterGlobalStat<StatControllers.DirectionalStats>();

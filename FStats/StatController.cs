@@ -10,8 +10,9 @@ namespace FStats
     /// Object which will be loaded and unloaded by FStats when a save file is entered and exited.
     /// 
     /// This can be either a local/save stat (associated with a single file) or a global stat
-    /// (will be loaded over multiple files). Operations on local stats will be called before
-    /// corresponding operations on global stats.
+    /// (will be loaded over multiple files). Initialize and GetDisplayInfos will be called on
+    /// local stats before global stats; Unload will be called on global stats before local
+    /// stats.
     /// </summary>
     public abstract class StatController
     {
