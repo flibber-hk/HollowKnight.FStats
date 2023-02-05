@@ -5,4 +5,11 @@
         NewGame,
         ExistingGame,
     }
+
+    public enum SettingType
+    {
+        Never,
+        Always,
+        ThisSession,
+    }
 }

@@ -31,6 +31,12 @@ namespace FStats
                 LogError("Error saving global stats: " + e);
             }
 
+            GlobalSettings gs = new();
+            gs.LoadFrom(GS);
+            if (gs.PreventSavingGlobalStats == SettingType.ThisSession)
+            {
+                gs.PreventSavingGlobalStats = SettingType.Never;
+            }
             return GS;
         }
         public void OnLoadGlobal(GlobalSettings gs)

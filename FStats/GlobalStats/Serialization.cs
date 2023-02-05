@@ -86,7 +86,7 @@ namespace FStats.GlobalStats
         public static void Save(GlobalStatManager mgr)
         {
             if (!FStatsMod.GS.TrackGlobalStats
-                || FStatsMod.GS.PreventSavingGlobalStats)
+                || (FStatsMod.GS.PreventSavingGlobalStats != SettingType.Never))
             {
                 _logger.Log($"Not saving global stats because of global settings ({FStatsMod.GS.TrackGlobalStats}, {FStatsMod.GS.PreventSavingGlobalStats})");
                 return;

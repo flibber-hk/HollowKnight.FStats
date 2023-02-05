@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MenuEntry = Modding.IMenuMod.MenuEntry;
 
 namespace FStats
@@ -29,11 +31,11 @@ namespace FStats
 
                 new()
                 {
-                    Name = "Save Global Stats",
-                    Description = "Disable to prevent saving lifetime stats at the end of this session.",
-                    Values = new[]{ "True", "False" }, // Swapped because the name does not match the setting
-                    Saver = v => FStatsMod.GS.PreventSavingGlobalStats = v == 1,
-                    Loader = () => FStatsMod.GS.PreventSavingGlobalStats ? 1 : 0,
+                    Name = "Prevent Global Stats Saving",
+                    Description = "Enable to prevent saving global stats.",
+                    Values = Enum.GetValues(typeof(SettingType)).Cast<SettingType>().Select(x => x.ToString()).ToArray(),
+                    Saver = v => FStatsMod.GS.PreventSavingGlobalStats = (SettingType)v,
+                    Loader = () => (int)FStatsMod.GS.PreventSavingGlobalStats,
                 },
             };
         }

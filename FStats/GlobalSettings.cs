@@ -18,7 +18,7 @@ namespace FStats
         /// The intended use case would be that the player realised too late that they did not
         /// want to upset their global stats.
         /// </summary>
-        [JsonIgnore] public bool PreventSavingGlobalStats { get; set; } = false;
+        public SettingType PreventSavingGlobalStats { get; set; } = SettingType.Never;
 
         public Dictionary<string, bool> DisplayedScreens;
          
@@ -65,6 +65,7 @@ namespace FStats
         {
             TrackGlobalStats = gs.TrackGlobalStats;
             ShowGlobalStats = gs.ShowGlobalStats;
+            PreventSavingGlobalStats = gs.PreventSavingGlobalStats;
 
             foreach ((string key, bool displayed) in gs.DisplayedScreens)
             {
