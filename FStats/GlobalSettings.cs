@@ -5,6 +5,7 @@ using FStats.Attributes;
 using Modding;
 using Modding.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace FStats
 {
@@ -18,7 +19,7 @@ namespace FStats
         /// The intended use case would be that the player realised too late that they did not
         /// want to upset their global stats.
         /// </summary>
-        public SettingType PreventSavingGlobalStats { get; set; } = SettingType.Never;
+        [JsonConverter(typeof(StringEnumConverter))] public SettingType PreventSavingGlobalStats { get; set; } = SettingType.Never;
 
         public Dictionary<string, bool> DisplayedScreens;
          
