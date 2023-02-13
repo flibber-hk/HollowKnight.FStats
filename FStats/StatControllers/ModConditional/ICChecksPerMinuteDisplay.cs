@@ -14,6 +14,64 @@ namespace FStats.StatControllers.ModConditional
             yield return "ItemChangerMod";
         }
 
+        public Dictionary<string, float> ItemChangerTimeByScene = new();
+
+        public override void OnInitialize()
+        {
+            if (FStatsMod.LS.Get<ICChecksDisplay>()?.EndScreenReached != true)
+            {
+                return;
+            }
+
+            Dictionary<string, float> timeByScene = FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene;
+            ItemChangerTimeByScene.Subtract(timeByScene);
+        }
+
+        public override void OnUnload()
+        {
+            if (FStatsMod.LS.Get<ICChecksDisplay>()?.EndScreenReached != true)
+            {
+                return;
+            }
+
+            Dictionary<string, float> timeByScene = FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene;
+            ItemChangerTimeByScene.Add(timeByScene);
+        }
+
+
+        public override IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos()
+        {
+            // Use ItemSyncData to gather data
+            // ItemSyncData.GatherData(out Dictionary<string, int> itemsByScene, out _);
+
+            Dictionary<string, int> itemsByScene = new();
+            itemsByScene.Add(GetOwningCollection().Get<ItemSyncData>().ObtainedByScene);
+
+            Dictionary<string, float> timeByScene = new();
+            timeByScene.Add(ItemChangerTimeByScene);
+
+            if (ItemChanger.Internal.Ref.Settings != null)
+            {
+                ItemSyncData.GatherData(out Dictionary<string, int> obtainedThisFile, out _);
+                itemsByScene.Add(obtainedThisFile);
+
+                Dictionary<string, float> timeBySceneThisFile = FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene;
+                timeByScene.Add(timeBySceneThisFile);
+            }
+
+            if (itemsByScene.Values.Sum() == 0) yield break;
+
+            Render(itemsByScene, timeByScene, out string mainStat, out List<string> statColumns);
+
+            yield return new()
+            {
+                Title = "Items collected per minute" + SaveFileCountString(GetOwningCollection().Get<ICChecksDisplay>().ItemChangerFileCount + 1),
+                MainStat = mainStat,
+                StatColumns = statColumns,
+                Priority = BuiltinScreenPriorityValues.ICChecksPerMinuteDisplay,
+            };
+        }
+
         public override IEnumerable<DisplayInfo> ConditionalGetDisplayInfos()
         {
             if (ItemChanger.Internal.Ref.Settings == null)
@@ -21,73 +79,56 @@ namespace FStats.StatControllers.ModConditional
                 yield break;
             }
 
-            Dictionary<string, int> obtained = new();
+            ItemSyncData.GatherData(out Dictionary<string, int> obtained, out _);
+            Dictionary<string, float> timeByScene = new(FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene);
 
-            foreach (AbstractPlacement pmt in ItemChanger.Internal.Ref.Settings.Placements.Values.SelectValidPlacements())
+            if (obtained.Values.Sum() == 0)
             {
-                if (pmt.Name == LocationNames.Start) continue;
-
-                string scene = string.Empty;
-                if (pmt is IPrimaryLocationPlacement ip && ip.Location.name != LocationNames.Start)
-                {
-                    scene = ip.Location.sceneName ?? AreaName.Other;
-                }
-
-                if (string.IsNullOrEmpty(scene))
-                {
-                    continue;
-                }
-
-                if (!obtained.ContainsKey(scene)) obtained.Add(scene, 0);
-
-                foreach (AbstractItem item in pmt.Items.SelectValidItems())
-                {
-                    if (item.GetTags<IInteropTag>().FirstOrDefault(x => x.Message == "SyncedItemTag") is IInteropTag t
-                        && t.TryGetProperty<bool>("Local", out bool local) && !local)
-                    {
-                        continue;
-                    }
-
-                    if (item.WasEverObtained())
-                    {
-                        obtained[scene]++;
-                    }
-                }
+                yield break;
             }
 
-            int Checks(string area) => obtained
+            Render(obtained, timeByScene, out string mainStat, out List<string> statColumns);
+
+            yield return new()
+            {
+                Title = "Items collected per minute",
+                MainStat = mainStat,
+                StatColumns = statColumns,
+                Priority = BuiltinScreenPriorityValues.ICChecksPerMinuteDisplay,
+            };
+
+        }
+
+        private void Render(Dictionary<string, int> itemsByScene, Dictionary<string, float> timeByScene, out string mainStat, out List<string> statColumns)
+        {
+            int Checks(string area) => itemsByScene
+                .Where(kvp => AreaName.CleanAreaName(kvp.Key) == area)
+                .Select(kvp => kvp.Value)
+                .DefaultIfEmpty(0)
+                .Sum();
+
+            float Time(string area) => timeByScene
                 .Where(kvp => AreaName.CleanAreaName(kvp.Key) == area)
                 .Select(kvp => kvp.Value)
                 .DefaultIfEmpty(0)
                 .Sum();
 
             List<string> Lines = new();
-            TimeByAreaStat tba = GetOwningCollection().Get<TimeByAreaStat>();
-            if (tba is null)
-            {
-                yield break;
-            }
-            foreach (string area in tba.AreaOrder)
+            
+            foreach (string area in GetOwningCollection().Get<TimeByAreaStat>().AreaOrder)
             {
                 int checks = Checks(area);
                 if (checks == 0) continue;
-                float time = tba.TimeByArea(area);
+                float time = Time(area);
                 if (time == 0) continue;
                 Lines.Add($"{area} - {checks / time * 60}");
             }
 
-            List<string> Columns = new()
+            mainStat = $"{itemsByScene.Values.Sum() / timeByScene.Values.Sum() * 60}";
+            statColumns = new()
             {
                 string.Join("\n", Lines.Slice(0, 2)),
                 string.Join("\n", Lines.Slice(1, 2)),
-            };
-
-            yield return new()
-            {
-                Title = "Items collected per minute",
-                MainStat = $"{obtained.Values.Sum() / GetOwningCollection().Get<Common>().CountedTime * 60}",
-                StatColumns = Columns,
-                Priority = BuiltinScreenPriorityValues.ICChecksPerMinuteDisplay,
             };
         }
     }
