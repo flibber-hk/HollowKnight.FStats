@@ -96,6 +96,7 @@ namespace FStats
             API.RegisterGlobalStat<StatControllers.Common>();
             API.RegisterGlobalStat<StatControllers.TimeByAreaStat>();
             API.RegisterGlobalStat<StatControllers.ModConditional.ICChecksDisplay>();
+            API.RegisterGlobalStat<StatControllers.ModConditional.ICChecksPerMinuteDisplay>();
             API.RegisterGlobalStat<StatControllers.ModConditional.ItemSyncData>();
             API.RegisterGlobalStat<StatControllers.HeroActionStats>();
             API.RegisterGlobalStat<StatControllers.DirectionalStats>();

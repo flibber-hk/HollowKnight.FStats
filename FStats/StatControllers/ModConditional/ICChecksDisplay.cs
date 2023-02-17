@@ -84,7 +84,7 @@ namespace FStats.StatControllers.ModConditional
                 Title = "Items Obtained" + SaveFileCountString(ItemChangerFileCount + 1),
                 MainStat = mainStat,
                 StatColumns = statColumns,
-                Priority = BuiltinScreenPriorityValues.ItemSyncData,
+                Priority = BuiltinScreenPriorityValues.ICChecksDisplay,
             };
         }
 
