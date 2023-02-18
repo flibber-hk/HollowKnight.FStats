@@ -41,6 +41,8 @@ namespace FStats.StatControllers.ModConditional
                 return;
             }
 
+            if (!IsGlobal) return;
+
             GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total);
             ObtainedByScene.Subtract(obtained);
             TotalByScene.Subtract(total);
@@ -53,6 +55,8 @@ namespace FStats.StatControllers.ModConditional
             {
                 return;
             }
+
+            if (!IsGlobal) return;
 
             GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total);
             ObtainedByScene.Add(obtained);

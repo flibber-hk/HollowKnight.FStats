@@ -14,6 +14,7 @@ namespace FStats.StatControllers.ModConditional
             yield return "ItemChangerMod";
         }
 
+        public Dictionary<string, int> CountedChecksByScene = new();
         public Dictionary<string, float> ItemChangerTimeByScene = new();
 
         public override void OnInitialize()
@@ -23,8 +24,12 @@ namespace FStats.StatControllers.ModConditional
                 return;
             }
 
+            if (!IsGlobal) return;
+
             Dictionary<string, float> timeByScene = FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene;
             ItemChangerTimeByScene.Subtract(timeByScene);
+            GatherData(out Dictionary<string, int> countedChecksByScene);
+            CountedChecksByScene.Subtract(countedChecksByScene);
         }
 
         public override void OnUnload()
@@ -34,25 +39,26 @@ namespace FStats.StatControllers.ModConditional
                 return;
             }
 
+            if (!IsGlobal) return;
+
             Dictionary<string, float> timeByScene = FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene;
             ItemChangerTimeByScene.Add(timeByScene);
+            GatherData(out Dictionary<string, int> countedChecksByScene);
+            CountedChecksByScene.Add(countedChecksByScene);
         }
 
 
         public override IEnumerable<DisplayInfo> ConditionalGetGlobalDisplayInfos()
         {
-            // Use ItemSyncData to gather data
-            // ItemSyncData.GatherData(out Dictionary<string, int> itemsByScene, out _);
-
             Dictionary<string, int> itemsByScene = new();
-            itemsByScene.Add(GetOwningCollection().Get<ItemSyncData>().ObtainedByScene);
+            itemsByScene.Add(CountedChecksByScene);
 
             Dictionary<string, float> timeByScene = new();
             timeByScene.Add(ItemChangerTimeByScene);
 
             if (ItemChanger.Internal.Ref.Settings != null)
             {
-                ItemSyncData.GatherData(out Dictionary<string, int> obtainedThisFile, out _);
+                GatherData(out Dictionary<string, int> obtainedThisFile);
                 itemsByScene.Add(obtainedThisFile);
 
                 Dictionary<string, float> timeBySceneThisFile = FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene;
@@ -79,15 +85,15 @@ namespace FStats.StatControllers.ModConditional
                 yield break;
             }
 
-            ItemSyncData.GatherData(out Dictionary<string, int> obtained, out _);
+            GatherData(out Dictionary<string, int> obtainedByScene);
             Dictionary<string, float> timeByScene = new(FStatsMod.LS.Get<TimeByAreaStat>().TimeByScene);
 
-            if (obtained.Values.Sum() == 0)
+            if (obtainedByScene.Values.Sum() == 0)
             {
                 yield break;
             }
 
-            Render(obtained, timeByScene, out string mainStat, out List<string> statColumns);
+            Render(obtainedByScene, timeByScene, out string mainStat, out List<string> statColumns);
 
             yield return new()
             {
@@ -130,6 +136,41 @@ namespace FStats.StatControllers.ModConditional
                 string.Join("\n", Lines.Slice(0, 2)),
                 string.Join("\n", Lines.Slice(1, 2)),
             };
+        }
+
+        public static void GatherData(out Dictionary<string, int> countedChecksByScene)
+        {
+            countedChecksByScene = new();
+
+            foreach (AbstractPlacement pmt in ItemChanger.Internal.Ref.Settings.Placements.Values.SelectValidPlacements())
+            {
+                if (pmt.Name == LocationNames.Start) continue;
+
+                string scene = string.Empty;
+                if (pmt is IPrimaryLocationPlacement ip && ip.Location.name != LocationNames.Start)
+                {
+                    scene = ip.Location.sceneName ?? AreaName.Other;
+                }
+
+                if (string.IsNullOrEmpty(scene))
+                {
+                    continue;
+                }
+
+                foreach (AbstractItem item in pmt.Items.SelectValidItems())
+                {
+                    if (item.GetTags<IInteropTag>().FirstOrDefault(x => x.Message == "SyncedItemTag") is IInteropTag t
+                        && t.TryGetProperty<bool>("Local", out bool local) && !local)
+                    {
+                        continue;
+                    }
+
+                    if (item.WasEverObtained())
+                    {
+                        countedChecksByScene.IncrementValue(scene);
+                    }
+                }
+            }
         }
     }
 }

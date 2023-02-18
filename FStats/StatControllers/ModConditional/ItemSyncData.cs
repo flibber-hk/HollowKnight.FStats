@@ -38,6 +38,8 @@ namespace FStats.StatControllers.ModConditional
                 return;
             }
 
+            if (!IsGlobal) return;
+
             ObtainedByScene.Subtract(obtainedThisFile);
             TotalByScene.Subtract(totalThisFile);
             ItemsyncFileCount--;
@@ -49,7 +51,9 @@ namespace FStats.StatControllers.ModConditional
             {
                 return;
             }
-            
+
+            if (!IsGlobal) return;
+
             ObtainedByScene.Add(obtainedThisFile);
             TotalByScene.Add(totalThisFile);
             ItemsyncFileCount++;

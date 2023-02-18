@@ -37,7 +37,7 @@ namespace FStats
             {
                 gs.PreventSavingGlobalStats = SettingType.Never;
             }
-            return GS;
+            return gs;
         }
         public void OnLoadGlobal(GlobalSettings gs)
         {

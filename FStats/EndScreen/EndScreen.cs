@@ -66,7 +66,7 @@ namespace FStats.EndScreen
 
             if (infos.Count == 0) return;
 
-            List<DisplayInfo> globalInfos = FStatsMod.GlobalStats.GenerateDisplays();
+            List<DisplayInfo> globalInfos = FStatsMod.GlobalStats?.GenerateDisplays() ?? new();
 
             // Set up the screen
             EndScreenObjectHolder holder = EndScreenObjectHolder.Setup(self);
