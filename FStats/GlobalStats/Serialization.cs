@@ -91,6 +91,10 @@ namespace FStats.GlobalStats
                 _logger.Log($"Not saving global stats because of global settings ({FStatsMod.GS.TrackGlobalStats}, {FStatsMod.GS.PreventSavingGlobalStats})");
                 return;
             }
+            if (mgr is null)
+            {
+                return;
+            }
 
 
             _logger.Log("Saving Global Stats");
