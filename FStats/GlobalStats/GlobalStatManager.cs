@@ -63,8 +63,16 @@ namespace FStats.GlobalStats
             {
                 if (TrackedStats.TryGetValue(typeName, out StatController sc))
                 {
-                    loadedTypeNames.Add(typeName);
-                    sc.Initialize();
+                    try
+                    {
+                        sc.Initialize();
+                        loadedTypeNames.Add(typeName);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex);
+                    }
+                    
                 }
             }
             LoadedStatNames = new(loadedTypeNames);
@@ -85,9 +93,17 @@ namespace FStats.GlobalStats
             foreach ((string typeName, StatController sc) in TrackedStats)
             {
                 if (sc is null) continue;
-                sc.FileCount += 1;
-                sc.Initialize();
-                LoadedStatNames.Add(typeName);
+                try
+                {
+                    sc.Initialize();
+                    sc.FileCount += 1;
+                    LoadedStatNames.Add(typeName);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex);
+                }
+                
             }
 
             return LoadedStatNames;
