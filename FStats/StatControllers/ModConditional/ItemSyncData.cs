@@ -150,6 +150,13 @@ namespace FStats.StatControllers.ModConditional
         /// The obtained and total arguments will be properly assigned regardless of the return value.</returns>
         public static bool GatherData(out Dictionary<string, int> obtained, out Dictionary<string, int> total)
         {
+            if (ItemChanger.Internal.Ref.Settings is null)
+            {
+                obtained = default;
+                total = default;
+                return false;
+            }
+
             bool isItemsync = false;
 
             obtained = new();
