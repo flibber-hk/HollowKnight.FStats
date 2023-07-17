@@ -133,7 +133,7 @@ namespace FStats.GlobalStats
                 StatController sc = TrackedStats[typeName];
                 if (!FStatsMod.GS.ShouldDisplay(sc)) continue;
 
-                foreach (DisplayInfo info in sc.GetGlobalDisplayInfos())
+                foreach (DisplayInfo info in sc.GetGlobalDisplayInfosSafe())
                 {
                     infos.Add(info);
                 }

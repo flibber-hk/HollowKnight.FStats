@@ -1,4 +1,5 @@
 ﻿using FStats.Interfaces;
+using Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace FStats
     /// </summary>
     public abstract class StatController
     {
+        private static SimpleLogger _log = new("FStats.StatController");
+
         /// <summary>
         /// Run when entering the save file.
         /// </summary>
@@ -60,5 +63,38 @@ namespace FStats
         /// save stats otherwise.
         /// </summary>
         protected IStatCollection GetOwningCollection() => IsGlobal ? FStatsMod.GlobalStats : FStatsMod.LS;
+
+
+        internal IEnumerable<DisplayInfo> GetDisplayInfosSafe()
+        {
+            IEnumerable<DisplayInfo> result;
+            try
+            {
+                result = GetDisplayInfos().ToList();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Error getting display infos for logger of type {GetType()}n" + ex);
+                return Enumerable.Empty<DisplayInfo>();
+            }
+
+            return result;
+        }
+
+        internal IEnumerable<DisplayInfo> GetGlobalDisplayInfosSafe()
+        {
+            IEnumerable<DisplayInfo> result;
+            try
+            {
+                result = GetGlobalDisplayInfos().ToList();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Error getting display infos for logger of type {GetType()}n" + ex);
+                return Enumerable.Empty<DisplayInfo>();
+            }
+
+            return result;
+        }
     }
 }

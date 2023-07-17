@@ -39,7 +39,7 @@ namespace FStats.EndScreen
             {
                 if (FStatsMod.GS.ShouldDisplay(c))
                 {
-                    foreach (DisplayInfo info in c.GetDisplayInfos())
+                    foreach (DisplayInfo info in c.GetDisplayInfosSafe())
                     {
                         infos.Add(info);
                     }
