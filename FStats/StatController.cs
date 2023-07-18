@@ -74,7 +74,7 @@ namespace FStats
             }
             catch (Exception ex)
             {
-                _log.LogError($"Error getting display infos for logger of type {GetType()}n" + ex);
+                _log.LogError($"Error getting display infos for logger of type {GetType()}\n" + ex);
                 return Enumerable.Empty<DisplayInfo>();
             }
 
@@ -90,7 +90,7 @@ namespace FStats
             }
             catch (Exception ex)
             {
-                _log.LogError($"Error getting display infos for logger of type {GetType()}n" + ex);
+                _log.LogError($"Error getting display infos for logger of type {GetType()}\n" + ex);
                 return Enumerable.Empty<DisplayInfo>();
             }
 
