@@ -8,6 +8,74 @@ namespace FStats.StatControllers
 {
     public class SkillTimeline : StatController
     {
+        private static ILogger _logger = new SimpleLogger("FStats.StatControllers.SkillTimeline");
+
+        /// <summary>
+        /// Register a player data bool to be tracked by the skill timeline. 
+        /// When that bool becomes true for the first time, the skill timeline 
+        /// will record it as having been obtained.
+        /// 
+        /// Example: RegisterNamedBool(nameof(PlayerData.hasSuperDash), "Crystal Heart");
+        /// </summary>
+        /// <param name="pdName">The name of the pd value to record.</param>
+        /// <param name="displayName">The text to display on the timeline.</param>
+        public static void RegisterNamedBool(string pdName, string displayName)
+        {
+            if (BoolNames.ContainsKey(pdName))
+            {
+                _logger.LogError($"Not registering {pdName} as already registered.");
+                return;
+            }
+
+            BoolNames[pdName] = displayName;
+        }
+
+        /// <summary>
+        /// Register a player data int to be tracked by the skill timeline.
+        /// When that int becomes equal to the given value for the first time, the skill
+        /// timeline will record it as having been obtained.
+        /// 
+        /// Example: RegisterNamedInt(nameof(PlayerData.quakeLevel), 1, "Desolate Dive");
+        /// </summary>
+        /// <param name="pdName">The name of the pd value to record.</param>
+        /// <param name="value">The value at which the pd should be to record.</param>
+        /// <param name="displayName">The text to display on the timeline.</param>
+        public static void RegisterNamedInt(string pdName, int value, string displayName)
+        {
+            string key = pdName + $"/{value}";
+
+            RegisterNamedBool(key, displayName);
+        }
+
+        /// <summary>
+        /// Register a player data value to be suppressed if other pd values are present.
+        /// 
+        /// For example, if left and right claw are present, then the full mantis claw (which is obtained
+        /// when both claw sides have been obtained) should be ignored.
+        /// 
+        /// In all cases, $"{pdName}/{value}" should be used to represent a pd int reaching a certain value.
+        /// 
+        /// Example: RegisterExclusion(nameof(PlayerData.hasWalljump), new(){"hasWalljumpLeft", "hasWalljumpRight"});
+        /// </summary>
+        /// <param name="pdName">The name of the pd value to suppress.</param>
+        /// <param name="exclusions">If any of these are present, then the original pd value will be suppressed.</param>
+        public static void RegisterExclusion(string pdName, List<string> exclusions)
+        {
+            if (!Exclusions.TryGetValue(pdName, out List<string> current))
+            {
+                current = new();
+                Exclusions[pdName] = current;
+            }
+
+            foreach (string exc in exclusions)
+            {
+                if (!current.Contains(exc))
+                {
+                    current.Add(exc);
+                }
+            }
+        }
+
         internal static readonly Dictionary<string, string> BoolNames = new()
         {
             [nameof(PlayerData.hasDash)] = "Mothwing Cloak",
@@ -106,6 +174,16 @@ namespace FStats.StatControllers
             if (Exclusions.TryGetValue(skillName, out List<string> exclusions))
             {
                 if (exclusions.Any(x => SkillObtainTimeline.ContainsKey(x)))
+                {
+                    return true;
+                }
+            }
+
+            string primarySkillName = skillName.Split('/')[0];
+
+            if (Exclusions.TryGetValue(primarySkillName, out List<string> primaryExclusions))
+            {
+                if (primaryExclusions.Any(x => SkillObtainTimeline.ContainsKey(x)))
                 {
                     return true;
                 }
